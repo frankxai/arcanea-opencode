@@ -18,6 +18,7 @@ const AgentPermissionSchema = z.object({
 
 export const BuiltinAgentNameSchema = z.enum([
   "Sisyphus",
+  "Arcanea",
   "oracle",
   "librarian",
   "explore",
@@ -27,6 +28,10 @@ export const BuiltinAgentNameSchema = z.enum([
   "Metis (Plan Consultant)",
   "Momus (Plan Reviewer)",
   "orchestrator-sisyphus",
+  "arcanea-architect",
+  "arcanea-coder",
+  "arcanea-reviewer",
+  "arcanea-debugger",
 ])
 
 export const BuiltinSkillNameSchema = z.enum([
@@ -39,6 +44,7 @@ export const OverridableAgentNameSchema = z.enum([
   "build",
   "plan",
   "Sisyphus",
+  "Arcanea",
   "OpenCode-Builder",
   "Prometheus (Planner)",
   "Metis (Plan Consultant)",
@@ -50,6 +56,10 @@ export const OverridableAgentNameSchema = z.enum([
   "document-writer",
   "multimodal-looker",
   "orchestrator-sisyphus",
+  "arcanea-architect",
+  "arcanea-coder",
+  "arcanea-reviewer",
+  "arcanea-debugger",
 ])
 
 export const AgentNameSchema = BuiltinAgentNameSchema
@@ -119,6 +129,7 @@ export const AgentOverridesSchema = z.object({
   build: AgentOverrideConfigSchema.optional(),
   plan: AgentOverrideConfigSchema.optional(),
   Sisyphus: AgentOverrideConfigSchema.optional(),
+  Arcanea: AgentOverrideConfigSchema.optional(),
   "OpenCode-Builder": AgentOverrideConfigSchema.optional(),
   "Prometheus (Planner)": AgentOverrideConfigSchema.optional(),
   "Metis (Plan Consultant)": AgentOverrideConfigSchema.optional(),
@@ -130,6 +141,10 @@ export const AgentOverridesSchema = z.object({
   "document-writer": AgentOverrideConfigSchema.optional(),
   "multimodal-looker": AgentOverrideConfigSchema.optional(),
   "orchestrator-sisyphus": AgentOverrideConfigSchema.optional(),
+  "arcanea-architect": AgentOverrideConfigSchema.optional(),
+  "arcanea-coder": AgentOverrideConfigSchema.optional(),
+  "arcanea-reviewer": AgentOverrideConfigSchema.optional(),
+  "arcanea-debugger": AgentOverrideConfigSchema.optional(),
 })
 
 export const ClaudeCodeConfigSchema = z.object({
@@ -358,5 +373,6 @@ export type BuiltinCategoryName = z.infer<typeof BuiltinCategoryNameSchema>
 export type GitMasterConfig = z.infer<typeof GitMasterConfigSchema>
 export type PersonaConfig = z.infer<typeof PersonaConfigSchema>
 export type PersonasConfig = z.infer<typeof PersonasConfigSchema>
+export type BuiltinAgentName = z.infer<typeof BuiltinAgentNameSchema>
 
 export { AnyMcpNameSchema, type AnyMcpName, McpNameSchema, type McpName } from "../mcp/types"
