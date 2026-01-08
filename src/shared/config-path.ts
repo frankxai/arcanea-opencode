@@ -2,29 +2,26 @@ import * as path from "path"
 import * as os from "os"
 import * as fs from "fs"
 
-/**
- * Returns the user-level config directory based on the OS.
- * - Linux/macOS: XDG_CONFIG_HOME or ~/.config
- * - Windows: Checks ~/.config first (cross-platform), then %APPDATA% (fallback)
- *
- * On Windows, prioritizes ~/.config for cross-platform consistency.
- * Falls back to %APPDATA% for backward compatibility with existing installations.
- */
+const CONFIG_FILENAME = "arcanea-opencode.json"
+const LEGACY_CONFIG_FILENAME = "oh-my-opencode.json"
+
+function findConfigFile(dir: string): string | null {
+  const newPath = path.join(dir, "opencode", CONFIG_FILENAME)
+  if (fs.existsSync(newPath)) return newPath
+  
+  const legacyPath = path.join(dir, "opencode", LEGACY_CONFIG_FILENAME)
+  if (fs.existsSync(legacyPath)) return legacyPath
+  
+  return null
+}
+
 export function getUserConfigDir(): string {
   if (process.platform === "win32") {
     const crossPlatformDir = path.join(os.homedir(), ".config")
-    const crossPlatformConfigPath = path.join(crossPlatformDir, "opencode", "oh-my-opencode.json")
-
     const appdataDir = process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming")
-    const appdataConfigPath = path.join(appdataDir, "opencode", "oh-my-opencode.json")
 
-    if (fs.existsSync(crossPlatformConfigPath)) {
-      return crossPlatformDir
-    }
-
-    if (fs.existsSync(appdataConfigPath)) {
-      return appdataDir
-    }
+    if (findConfigFile(crossPlatformDir)) return crossPlatformDir
+    if (findConfigFile(appdataDir)) return appdataDir
 
     return crossPlatformDir
   }
@@ -32,16 +29,23 @@ export function getUserConfigDir(): string {
   return process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config")
 }
 
-/**
- * Returns the full path to the user-level oh-my-opencode config file.
- */
 export function getUserConfigPath(): string {
-  return path.join(getUserConfigDir(), "opencode", "oh-my-opencode.json")
+  const configDir = getUserConfigDir()
+  const newPath = path.join(configDir, "opencode", CONFIG_FILENAME)
+  const legacyPath = path.join(configDir, "opencode", LEGACY_CONFIG_FILENAME)
+  
+  if (fs.existsSync(newPath)) return newPath
+  if (fs.existsSync(legacyPath)) return legacyPath
+  
+  return newPath
 }
 
-/**
- * Returns the full path to the project-level oh-my-opencode config file.
- */
 export function getProjectConfigPath(directory: string): string {
-  return path.join(directory, ".opencode", "oh-my-opencode.json")
+  const newPath = path.join(directory, ".opencode", CONFIG_FILENAME)
+  const legacyPath = path.join(directory, ".opencode", LEGACY_CONFIG_FILENAME)
+  
+  if (fs.existsSync(newPath)) return newPath
+  if (fs.existsSync(legacyPath)) return legacyPath
+  
+  return newPath
 }

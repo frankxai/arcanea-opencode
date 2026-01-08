@@ -34,9 +34,14 @@ function loadJsonFile<T>(path: string): T | null {
 
 function getConfigPaths(): { project: string; user: string; opencode: string } {
   const cwd = process.cwd()
+  const projectNew = join(cwd, ".opencode", "arcanea-opencode.json")
+  const projectLegacy = join(cwd, ".opencode", "oh-my-opencode.json")
+  const userNew = join(homedir(), ".config", "opencode", "arcanea-opencode.json")
+  const userLegacy = join(homedir(), ".config", "opencode", "oh-my-opencode.json")
+  
   return {
-    project: join(cwd, ".opencode", "oh-my-opencode.json"),
-    user: join(homedir(), ".config", "opencode", "oh-my-opencode.json"),
+    project: require("fs").existsSync(projectNew) ? projectNew : projectLegacy,
+    user: require("fs").existsSync(userNew) ? userNew : userLegacy,
     opencode: join(homedir(), ".config", "opencode", "opencode.json"),
   }
 }
