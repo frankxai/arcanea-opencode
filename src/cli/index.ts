@@ -2,86 +2,79 @@
 
 import { Command } from "commander";
 import pc from "picocolors";
-import { VERSION, NAME, ORCHESTRATOR } from "../index.js";
-import { cpSync, existsSync, mkdirSync } from "fs";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const configSource = join(__dirname, "../../.opencode");
+import { VERSION, NAME, ORCHESTRATOR, AGENT_TEAMS } from "../index.js";
+import { install } from "../install.js";
+import { existsSync } from "fs";
+import { join } from "path";
 
 const program = new Command();
 
 program
   .name(NAME)
-  .description(`${ORCHESTRATOR}'s Loom - AI-Powered World-Building Orchestration`)
+  .description(`${ORCHESTRATOR} - Master Creative Intelligence for World-Building, Storytelling, and Media Production`)
   .version(VERSION);
 
 program
-  .command("init")
-  .description("Initialize Arcanea OpenCode in current project")
+  .command("install")
+  .description("Initialize Arcanea in current project")
   .option("-f, --force", "Overwrite existing configuration")
-  .action((options) => {
+  .option("--opencode-only", "Only install OpenCode config (skip Claude Code)")
+  .option("--claude-only", "Only install Claude Code config (skip OpenCode)")
+  .option("--skip-mcp", "Skip MCP configuration")
+  .action(async (options) => {
     const targetDir = process.cwd();
-    const opencodePath = join(targetDir, ".opencode");
-    const claudePath = join(targetDir, ".claude");
-    
-    console.log(pc.cyan(`\n✨ ${ORCHESTRATOR} awakens...\n`));
-    
-    if (existsSync(opencodePath) && !options.force) {
-      console.log(pc.yellow("⚠️  .opencode folder already exists. Use --force to overwrite."));
-      return;
-    }
-    
-    try {
-      mkdirSync(opencodePath, { recursive: true });
-      cpSync(configSource, opencodePath, { recursive: true });
-      
-      if (!existsSync(claudePath)) {
-        mkdirSync(claudePath, { recursive: true });
-        cpSync(join(configSource, "agents"), join(claudePath, "agents"), { recursive: true });
-        cpSync(join(configSource, "skills"), join(claudePath, "skills"), { recursive: true });
-        cpSync(join(configSource, "commands"), join(claudePath, "commands"), { recursive: true });
-      }
-      
-      console.log(pc.green("✅ Arcanea OpenCode initialized!\n"));
-      console.log("Your agent team is ready:");
-      console.log(pc.blue("  • Lore Master") + " - Canon Guardian");
-      console.log(pc.blue("  • World Architect") + " - Physical World");
-      console.log(pc.blue("  • Character Weaver") + " - People & Relationships");
-      console.log(pc.blue("  • Magic Systems") + " - Supernatural Rules");
-      console.log(pc.blue("  • Narrative Director") + " - Story & Conflict");
-      console.log(pc.dim("  + 6 specialist agents for background tasks\n"));
-      
-      console.log(pc.cyan("Try: ") + pc.bold("ultraworld: Create a new fantasy realm"));
-      console.log(pc.cyan("Or:  ") + pc.bold("/generate-realm [name]\n"));
-      
-    } catch (error) {
-      console.error(pc.red("Failed to initialize:"), error);
-      process.exit(1);
-    }
+
+    await install(targetDir, {
+      force: options.force,
+      openCode: !options.claudeOnly,
+      claudeCode: !options.opencodeOnly,
+      skipMcp: options.skipMcp
+    });
   });
 
 program
   .command("agents")
-  .description("List available agents")
-  .action(() => {
-    console.log(pc.cyan(`\n${ORCHESTRATOR}'s Agent Team\n`));
-    
-    console.log(pc.bold("Department Heads (Strategic):"));
-    console.log("  lore-master        - Canon, consistency, timeline");
-    console.log("  world-architect    - Geography, cosmology, physics");
-    console.log("  character-weaver   - People, relationships, arcs");
-    console.log("  magic-systems      - Rules, costs, artifacts");
-    console.log("  narrative-director - Story, conflict, quests\n");
-    
-    console.log(pc.bold("Specialists (Background Speed):"));
-    console.log("  geography-cartographer  - Location details");
-    console.log("  culture-anthropologist  - Society design");
-    console.log("  timeline-historian      - Chronology");
-    console.log("  species-biologist       - Creatures, races");
-    console.log("  conflict-dramatist      - Dramatic tension");
-    console.log("  consistency-validator   - QA, validation\n");
+  .description("List available agent teams")
+  .option("-t, --team <team>", "Show specific team details")
+  .action((options) => {
+    console.log(pc.cyan(`\n${ORCHESTRATOR}'s Agent Teams\n`));
+
+    if (options.team) {
+      const team = AGENT_TEAMS[options.team as keyof typeof AGENT_TEAMS];
+      if (team) {
+        console.log(pc.bold(team.name));
+        console.log(pc.dim(team.description));
+        console.log();
+        if ("departments" in team) {
+          console.log("  Departments:", team.departments.join(", "));
+          console.log("  Specialists:", team.specialists.join(", "));
+        } else {
+          console.log("  Agents:", team.agents.join(", "));
+        }
+      } else {
+        console.log(pc.red(`Unknown team: ${options.team}`));
+        console.log("Available teams: worldBuilding, writingEditing, production, research");
+      }
+      return;
+    }
+
+    console.log(pc.bold(pc.blue("World Building:")));
+    console.log("  Departments: lore-master, world-architect, archmage, character-creator, narrative-director");
+    console.log("  Specialists: geography-cartographer, culture-anthropologist, timeline-historian,");
+    console.log("              species-biologist, conflict-dramatist, consistency-validator");
+    console.log();
+
+    console.log(pc.bold(pc.green("Writing & Editing:")));
+    console.log("  story-architect, prose-weaver, voice-alchemist, line-editor, continuity-guardian");
+    console.log();
+
+    console.log(pc.bold(pc.magenta("Production:")));
+    console.log("  visual-director, sound-designer, format-master");
+    console.log();
+
+    console.log(pc.bold(pc.yellow("Research & Reference:")));
+    console.log("  sage, archivist, scout, muse");
+    console.log();
   });
 
 program
@@ -89,12 +82,94 @@ program
   .description("List available slash commands")
   .action(() => {
     console.log(pc.cyan("\nAvailable Slash Commands\n"));
+
+    console.log(pc.bold("World Building:"));
     console.log("  /generate-realm [name]     - Create complete world");
     console.log("  /create-character [name]   - Design character with depth");
     console.log("  /design-location [name]    - Build detailed place");
-    console.log("  /define-magic-rule [idea]  - Extend magic system");
-    console.log("  /ultraworld [scope] [desc] - Maximum parallel generation");
-    console.log("  /validate-entity [path]    - Check for consistency\n");
+    console.log("  /define-magic [concept]    - Extend magic system");
+    console.log("  /validate-entity [path]    - Check for consistency");
+    console.log();
+
+    console.log(pc.bold("Writing:"));
+    console.log("  /outline-story [concept]   - Create story structure");
+    console.log("  /write-chapter [number]    - Draft chapter");
+    console.log("  /edit-chapter [path]       - Polish chapter");
+    console.log("  /check-continuity          - Validate across chapters");
+    console.log();
+
+    console.log(pc.bold("Production:"));
+    console.log("  /visualize [entity]        - Generate art (Nano Banana)");
+    console.log("  /compose-theme [entity]    - Generate music (Suno)");
+    console.log("  /export-book [format]      - Create publishable files");
+    console.log();
+
+    console.log(pc.bold("Meta:"));
+    console.log("  /ultraworld [desc]         - Maximum parallel world generation");
+    console.log("  /ultrawrite [desc]         - Maximum parallel chapter writing");
+    console.log("  /ultrabook [desc]          - Complete book pipeline");
+    console.log();
+  });
+
+program
+  .command("magic")
+  .description("Show magic words and their effects")
+  .action(() => {
+    console.log(pc.cyan("\nMagic Words\n"));
+
+    console.log(pc.bold(pc.cyan("ultraworld")) + " (or " + pc.bold("ulw") + ")");
+    console.log("  Fires ALL world-building agents in parallel:");
+    console.log("  World Architect + Archmage + Character Creator + Narrative Director");
+    console.log("  + All specialists running in background");
+    console.log();
+
+    console.log(pc.bold(pc.green("ultrawrite")) + " (or " + pc.bold("ulwr") + ")");
+    console.log("  Fires ALL writing/editing agents in parallel:");
+    console.log("  Story Architect + Prose Weaver + Voice Alchemist");
+    console.log("  + Line Editor and Continuity Guardian in background");
+    console.log();
+
+    console.log(pc.bold(pc.magenta("ultrabook")) + " (or " + pc.bold("ulb") + ")");
+    console.log("  Complete book pipeline - everything at once:");
+    console.log("  World Building → Story → Chapters → Editing → Production");
+    console.log();
+
+    console.log(pc.dim("Just include any magic word in your prompt!"));
+    console.log();
+  });
+
+program
+  .command("status")
+  .description("Check Arcanea installation status")
+  .action(() => {
+    const cwd = process.cwd();
+
+    console.log(pc.cyan(`\n${ORCHESTRATOR} Status\n`));
+
+    const checks = [
+      { path: ".opencode/CLAUDE.md", name: "OpenCode config" },
+      { path: ".claude/agents", name: "Claude Code agents" },
+      { path: ".claude/skills", name: "Claude Code skills" },
+      { path: ".claude/commands", name: "Claude Code commands" },
+      { path: "arcanea.json", name: "Arcanea config" },
+      { path: ".mcp.json", name: "MCP config" }
+    ];
+
+    let allGood = true;
+    for (const check of checks) {
+      const exists = existsSync(join(cwd, check.path));
+      const status = exists ? pc.green("✓") : pc.red("✗");
+      console.log(`  ${status} ${check.name}`);
+      if (!exists) allGood = false;
+    }
+
+    console.log();
+    if (allGood) {
+      console.log(pc.green("All systems operational!"));
+    } else {
+      console.log(pc.yellow("Run 'arcanea install' to complete setup."));
+    }
+    console.log();
   });
 
 program.parse();
