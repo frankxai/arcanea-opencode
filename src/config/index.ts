@@ -9,6 +9,8 @@ export {
   SisyphusAgentConfigSchema,
   ExperimentalConfigSchema,
   RalphLoopConfigSchema,
+  PersonaConfigSchema,
+  PersonasConfigSchema,
 } from "./schema"
 
 export type {
@@ -23,4 +25,15 @@ export type {
   ExperimentalConfig,
   DynamicContextPruningConfig,
   RalphLoopConfig,
+  PersonaConfig,
+  PersonasConfig,
 } from "./schema"
+
+export {
+  getActivePersona,
+  getPersonaDisplayName,
+  getPlannerDisplayName,
+  getBuiltinPersonas,
+} from "../shared/persona"
+
+export type { PersonaInfo } from "../shared/persona"

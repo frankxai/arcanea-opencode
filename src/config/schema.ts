@@ -291,13 +291,31 @@ export const NotificationConfigSchema = z.object({
 })
 
 export const GitMasterConfigSchema = z.object({
-  /** Add "Ultraworked with Sisyphus" footer to commit messages (default: true) */
+  /** Add "Ultraworked with {persona}" footer to commit messages (default: true) */
   commit_footer: z.boolean().default(true),
-  /** Add "Co-authored-by: Sisyphus" trailer to commit messages (default: true) */
+  /** Add "Co-authored-by: {persona}" trailer to commit messages (default: true) */
   include_co_authored_by: z.boolean().default(true),
 })
+
+export const PersonaConfigSchema = z.object({
+  /** Display name for this persona (shown in UI) */
+  display_name: z.string(),
+  /** Optional custom system prompt to append */
+  prompt_append: z.string().optional(),
+  /** Model to use for this persona */
+  model: z.string().optional(),
+  /** Color for UI display (hex format) */
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  /** Whether this is the default persona */
+  is_default: z.boolean().optional(),
+})
+
+export const PersonasConfigSchema = z.record(z.string(), PersonaConfigSchema)
+
 export const OhMyOpenCodeConfigSchema = z.object({
   $schema: z.string().optional(),
+  persona: z.string().optional(),
+  personas: PersonasConfigSchema.optional(),
   disabled_mcps: z.array(AnyMcpNameSchema).optional(),
   disabled_agents: z.array(BuiltinAgentNameSchema).optional(),
   disabled_skills: z.array(BuiltinSkillNameSchema).optional(),
@@ -338,5 +356,7 @@ export type CategoryConfig = z.infer<typeof CategoryConfigSchema>
 export type CategoriesConfig = z.infer<typeof CategoriesConfigSchema>
 export type BuiltinCategoryName = z.infer<typeof BuiltinCategoryNameSchema>
 export type GitMasterConfig = z.infer<typeof GitMasterConfigSchema>
+export type PersonaConfig = z.infer<typeof PersonaConfigSchema>
+export type PersonasConfig = z.infer<typeof PersonasConfigSchema>
 
 export { AnyMcpNameSchema, type AnyMcpName, McpNameSchema, type McpName } from "../mcp/types"

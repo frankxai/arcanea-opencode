@@ -1,26 +1,44 @@
 import * as fs from "fs"
 import { log } from "./logger"
+import type { OhMyOpenCodeConfig } from "../config/schema"
+import { getPersonaDisplayName } from "./persona"
 
-// Migration map: old keys → new keys (for backward compatibility)
-export const AGENT_NAME_MAP: Record<string, string> = {
-  omo: "Sisyphus",
-  "OmO": "Sisyphus",
-  sisyphus: "Sisyphus",
-  "OmO-Plan": "Prometheus (Planner)",
-  "omo-plan": "Prometheus (Planner)",
-  "Planner-Sisyphus": "Prometheus (Planner)",
-  "planner-sisyphus": "Prometheus (Planner)",
-  prometheus: "Prometheus (Planner)",
-  "plan-consultant": "Metis (Plan Consultant)",
-  metis: "Metis (Plan Consultant)",
-  build: "build",
-  oracle: "oracle",
-  librarian: "librarian",
-  explore: "explore",
-  "frontend-ui-ux-engineer": "frontend-ui-ux-engineer",
-  "document-writer": "document-writer",
-  "multimodal-looker": "multimodal-looker",
+let _cachedPersonaName: string | null = null
+
+export function setPersonaName(name: string): void {
+  _cachedPersonaName = name
 }
+
+export function getPersonaName(): string {
+  return _cachedPersonaName ?? "Sisyphus"
+}
+
+export function createAgentNameMap(personaName: string = getPersonaName()): Record<string, string> {
+  return {
+    omo: personaName,
+    "OmO": personaName,
+    sisyphus: personaName,
+    arcanea: personaName,
+    "OmO-Plan": "Prometheus (Planner)",
+    "omo-plan": "Prometheus (Planner)",
+    "Planner-Sisyphus": "Prometheus (Planner)",
+    "planner-sisyphus": "Prometheus (Planner)",
+    "Planner-Arcanea": "Prometheus (Planner)",
+    "planner-arcanea": "Prometheus (Planner)",
+    prometheus: "Prometheus (Planner)",
+    "plan-consultant": "Metis (Plan Consultant)",
+    metis: "Metis (Plan Consultant)",
+    build: "build",
+    oracle: "oracle",
+    librarian: "librarian",
+    explore: "explore",
+    "frontend-ui-ux-engineer": "frontend-ui-ux-engineer",
+    "document-writer": "document-writer",
+    "multimodal-looker": "multimodal-looker",
+  }
+}
+
+export const AGENT_NAME_MAP: Record<string, string> = createAgentNameMap()
 
 // Migration map: old hook names → new hook names (for backward compatibility)
 export const HOOK_NAME_MAP: Record<string, string> = {

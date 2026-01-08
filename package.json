@@ -1,12 +1,12 @@
 {
-  "name": "oh-my-opencode",
-  "version": "2.14.0",
-  "description": "The Best AI Agent Harness - Batteries-Included OpenCode Plugin with Multi-Model Orchestration, Parallel Background Agents, and Crafted LSP/AST Tools",
+  "name": "arcanea-opencode",
+  "version": "3.0.0",
+  "description": "Arcanea - The Creative Intelligence Platform for OpenCode. Fork of oh-my-opencode with persona system supporting both Sisyphus and Arcanea modes.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "bin": {
-    "oh-my-opencode": "./dist/cli/index.js"
+    "arcanea-opencode": "./dist/cli/index.js"
   },
   "files": [
     "dist"
@@ -20,7 +20,7 @@
       "types": "./dist/google-auth.d.ts",
       "import": "./dist/google-auth.js"
     },
-    "./schema.json": "./dist/oh-my-opencode.schema.json"
+    "./schema.json": "./dist/arcanea-opencode.schema.json"
   },
   "scripts": {
     "build": "bun build src/index.ts src/google-auth.ts --outdir dist --target bun --format esm --external @ast-grep/napi && tsc --emitDeclarationOnly && bun build src/cli/index.ts --outdir dist/cli --target bun --format esm --external @ast-grep/napi && bun run build:schema",
@@ -33,22 +33,33 @@
   "keywords": [
     "opencode",
     "plugin",
+    "arcanea",
+    "sisyphus",
     "oracle",
     "librarian",
     "agents",
     "ai",
-    "llm"
+    "llm",
+    "luminor",
+    "creative-intelligence"
   ],
-  "author": "YeonGyu-Kim",
+  "author": "FrankX <frank@frankx.io>",
+  "contributors": [
+    {
+      "name": "YeonGyu Kim",
+      "url": "https://github.com/code-yeongyu",
+      "note": "Original oh-my-opencode author"
+    }
+  ],
   "license": "SUL-1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/code-yeongyu/oh-my-opencode.git"
+    "url": "git+https://github.com/frankxai/arcanea-opencode.git"
   },
   "bugs": {
-    "url": "https://github.com/code-yeongyu/oh-my-opencode/issues"
+    "url": "https://github.com/frankxai/arcanea-opencode/issues"
   },
-  "homepage": "https://github.com/code-yeongyu/oh-my-opencode#readme",
+  "homepage": "https://github.com/frankxai/arcanea-opencode#readme",
   "dependencies": {
     "@ast-grep/cli": "^0.40.0",
     "@ast-grep/napi": "^0.40.0",
@@ -78,5 +89,11 @@
     "@ast-grep/cli",
     "@ast-grep/napi",
     "@code-yeongyu/comment-checker"
-  ]
+  ],
+  "upstream": {
+    "name": "oh-my-opencode",
+    "version": "2.14.0",
+    "repository": "https://github.com/code-yeongyu/oh-my-opencode",
+    "license": "SUL-1.0"
+  }
 }

@@ -14,6 +14,7 @@ import type { AvailableAgent } from "./sisyphus-prompt-builder"
 import { deepMerge } from "../shared"
 import { DEFAULT_CATEGORIES } from "../tools/sisyphus-task/constants"
 import { resolveMultipleSkills } from "../features/opencode-skill-loader/skill-content"
+import type { PersonaInfo } from "../shared/persona"
 
 type AgentSource = AgentFactory | AgentConfig
 
@@ -114,14 +115,27 @@ function mergeAgentConfig(
   return merged
 }
 
+export interface CreateBuiltinAgentsOptions {
+  disabledAgents?: BuiltinAgentName[]
+  agentOverrides?: AgentOverrides
+  directory?: string
+  systemDefaultModel?: string
+  persona?: PersonaInfo
+}
+
 export function createBuiltinAgents(
   disabledAgents: BuiltinAgentName[] = [],
   agentOverrides: AgentOverrides = {},
   directory?: string,
-  systemDefaultModel?: string
+  systemDefaultModel?: string,
+  persona?: PersonaInfo
 ): Record<string, AgentConfig> {
   const result: Record<string, AgentConfig> = {}
   const availableAgents: AvailableAgent[] = []
+  
+  const personaName = persona?.displayName ?? "Sisyphus"
+  const personaPromptAppend = persona?.promptAppend
+  const personaColor = persona?.color
 
   for (const [name, source] of Object.entries(agentSources)) {
     const agentName = name as BuiltinAgentName
@@ -170,8 +184,24 @@ export function createBuiltinAgents(
     if (sisyphusOverride) {
       sisyphusConfig = mergeAgentConfig(sisyphusConfig, sisyphusOverride)
     }
+    
+    if (personaPromptAppend) {
+      sisyphusConfig = {
+        ...sisyphusConfig,
+        prompt: sisyphusConfig.prompt + "\n\n" + personaPromptAppend,
+      }
+    }
+    
+    if (personaColor) {
+      sisyphusConfig = { ...sisyphusConfig, color: personaColor }
+    }
+    
+    sisyphusConfig = {
+      ...sisyphusConfig,
+      description: sisyphusConfig.description?.replace(/Sisyphus/g, personaName) ?? personaName,
+    }
 
-    result["Sisyphus"] = sisyphusConfig
+    result[personaName] = sisyphusConfig
   }
 
   if (!disabledAgents.includes("orchestrator-sisyphus")) {
@@ -182,7 +212,7 @@ export function createBuiltinAgents(
       orchestratorConfig = mergeAgentConfig(orchestratorConfig, orchestratorOverride)
     }
 
-    result["orchestrator-sisyphus"] = orchestratorConfig
+    result[`orchestrator-${personaName.toLowerCase()}`] = orchestratorConfig
   }
 
   return result
