@@ -1,0 +1,57 @@
+{
+  "name": "arcanea-opencode",
+  "version": "1.0.0",
+  "description": "The Weaver's Loom - AI-Powered World-Building Orchestration for Fantasy Creators. Built on oh-my-opencode.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "arcanea-opencode": "./dist/cli/index.js",
+    "arcanea": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    ".opencode"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc --emitDeclarationOnly && bun build src/cli/index.ts --outdir dist/cli --target bun --format esm",
+    "install-config": "node scripts/install-config.js",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "bun run clean && bun run build"
+  },
+  "keywords": [
+    "arcanea",
+    "opencode",
+    "world-building",
+    "fantasy",
+    "fiction",
+    "ai-agents",
+    "the-weaver",
+    "multi-agent",
+    "storytelling",
+    "lore",
+    "rpg"
+  ],
+  "author": "FrankX <frank@arcanea.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frankxai/arcanea-opencode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/frankxai/arcanea-opencode/issues"
+  },
+  "homepage": "https://arcanea.ai",
+  "dependencies": {
+    "oh-my-opencode": "^2.14.0",
+    "commander": "^14.0.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "^1.1.1"
+  }
+}
