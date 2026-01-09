@@ -7,5 +7,6 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #505 | 2:44 PM | 🔴 | Arcanea-OpenCode Fork Successfully Compiles After Type Fixes | ~354 |
+| #509 | 2:44 PM | 🔴 | Type Fixes Committed to Arcanea-OpenCode Fork with CLAUDE.md Files | ~406 |
+| #505 | " | 🔴 | Arcanea-OpenCode Fork Successfully Compiles After Type Fixes | ~354 |
 </claude-mem-context>

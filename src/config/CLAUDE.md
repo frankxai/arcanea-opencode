@@ -7,6 +7,7 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #509 | 2:44 PM | 🔴 | Type Fixes Committed to Arcanea-OpenCode Fork with CLAUDE.md Files | ~406 |
 | #492 | 2:41 PM | 🟣 | Multi-Agent Arcanea System Defined in Built-in Agent Schema | ~442 |
 | #486 | 2:40 PM | 🔵 | Arcanea Agent Schema Configuration Present in Fork Source Code | ~286 |
 </claude-mem-context>
