@@ -9,4 +9,11 @@
 |----|------|---|-------|------|
 | #509 | 2:44 PM | 🔴 | Type Fixes Committed to Arcanea-OpenCode Fork with CLAUDE.md Files | ~406 |
 | #505 | " | 🔴 | Arcanea-OpenCode Fork Successfully Compiles After Type Fixes | ~354 |
+
+### Jan 12, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #747 | 1:18 PM | 🔵 | Thinking Block Validator Hook Identified in Codebase | ~418 |
+| #744 | 1:17 PM | 🔵 | Plugin Source Code Structure with 100+ TypeScript Files | ~471 |
 </claude-mem-context>

@@ -9,6 +9,5 @@
 |----|------|---|-------|------|
 | #507 | 2:44 PM | ✅ | Schema and Agent Types Updated with 816 Lines of Arcanea Definitions | ~372 |
 | #496 | 2:43 PM | 🔵 | Arcanea Agent Implementation Located in Utils and Types Files | ~336 |
-| #487 | 2:40 PM | 🔵 | Arcanea-OpenCode Fork Source Code Contains Working Agent Definitions | ~480 |
-| #479 | " | 🔴 | OpenCode Configuration Fixed to Use oh-my-opencode with Arcanea Identity | ~579 |
+| #479 | 2:40 PM | 🔴 | OpenCode Configuration Fixed to Use oh-my-opencode with Arcanea Identity | ~579 |
 </claude-mem-context>

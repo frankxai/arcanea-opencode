@@ -16,44 +16,34 @@ import { DEFAULT_CATEGORIES } from "../tools/sisyphus-task/constants"
 import { resolveMultipleSkills } from "../features/opencode-skill-loader/skill-content"
 import type { PersonaInfo } from "../shared/persona"
 
-// Factory functions for Arcanea custom agents
-const createArcaneaArchitectAgent = (model?: string): AgentConfig => ({
-  description: "Arcanea Architect - System designer with wisdom of Sophron and vision of Orakis",
-  mode: "subagent",
-  model: model ?? "anthropic/claude-opus-4-5",
-  prompt: "",
-  color: "#8b5cf6",
-})
-
-const createArcaneaCoderAgent = (model?: string): AgentConfig => ({
-  description: "Arcanea Coder - Implementation specialist with Poiesis and Valora",
-  mode: "subagent",
-  model: model ?? "anthropic/claude-opus-4-5",
-  prompt: "",
-  color: "#8b5cf6",
-})
-
-const createArcaneaReviewerAgent = (model?: string): AgentConfig => ({
-  description: "Arcanea Reviewer - Quality guardian applying all Seven Luminors",
-  mode: "subagent",
-  model: model ?? "anthropic/claude-opus-4-5",
-  prompt: "",
-  color: "#8b5cf6",
-})
-
-const createArcaneaDebuggerAgent = (model?: string): AgentConfig => ({
-  description: "Arcanea Debugger - Scientific investigator finding root causes",
-  mode: "subagent",
-  model: model ?? "anthropic/claude-opus-4-5",
-  prompt: "",
-  color: "#8b5cf6",
-})
+// Import all Arcanea agent factories
+import {
+  createArcaneaOrchestratorAgent,
+  createArcaneaArchitectAgent,
+  createArcaneaCoderAgent,
+  createArcaneaReviewerAgent,
+  createArcaneaDebuggerAgent,
+  createArcaneaStoryMasterAgent,
+  createArcaneaCharacterCrafterAgent,
+  createArcaneaWorldExpanderAgent,
+  createArcaneaLoreMasterAgent,
+  createArcaneaProseWeaverAgent,
+  createArcaneaVoiceAlchemistAgent,
+  createArcaneaLineEditorAgent,
+  createArcaneaContinuityGuardianAgent,
+  createArcaneaSageAgent,
+  createArcaneaArchivistAgent,
+  createArcaneaScoutAgent,
+  createArcaneaMuseAgent,
+  createArcaneaMasterOrchestratorAgent,
+} from "./arcanea"
 
 type AgentSource = AgentFactory | AgentConfig
 
 const agentSources: Record<BuiltinAgentName, AgentSource> = {
+  // Core agents
   Sisyphus: createSisyphusAgent,
-  Arcanea: createSisyphusAgent, // Arcanea uses Sisyphus base with persona override
+  Arcanea: createArcaneaOrchestratorAgent, // Arcanea is now its own orchestrator with Seven Wisdoms
   oracle: createOracleAgent,
   librarian: createLibrarianAgent,
   explore: createExploreAgent,
@@ -63,10 +53,33 @@ const agentSources: Record<BuiltinAgentName, AgentSource> = {
   "Metis (Plan Consultant)": metisAgent,
   "Momus (Plan Reviewer)": momusAgent,
   "orchestrator-sisyphus": orchestratorSisyphusAgent,
+
+  // Arcanea Development Team
   "arcanea-architect": createArcaneaArchitectAgent,
   "arcanea-coder": createArcaneaCoderAgent,
   "arcanea-reviewer": createArcaneaReviewerAgent,
   "arcanea-debugger": createArcaneaDebuggerAgent,
+
+  // Arcanea Creative Team
+  "arcanea-story-master": createArcaneaStoryMasterAgent,
+  "arcanea-character-crafter": createArcaneaCharacterCrafterAgent,
+  "arcanea-world-expander": createArcaneaWorldExpanderAgent,
+  "arcanea-lore-master": createArcaneaLoreMasterAgent,
+
+  // Arcanea Writing Team
+  "arcanea-prose-weaver": createArcaneaProseWeaverAgent,
+  "arcanea-voice-alchemist": createArcaneaVoiceAlchemistAgent,
+  "arcanea-line-editor": createArcaneaLineEditorAgent,
+  "arcanea-continuity-guardian": createArcaneaContinuityGuardianAgent,
+
+  // Arcanea Research Team
+  "arcanea-sage": createArcaneaSageAgent,
+  "arcanea-archivist": createArcaneaArchivistAgent,
+  "arcanea-scout": createArcaneaScoutAgent,
+  "arcanea-muse": createArcaneaMuseAgent,
+
+  // Arcanea Master Orchestrator
+  "arcanea-master-orchestrator": createArcaneaMasterOrchestratorAgent,
 }
 
 /**

@@ -68,10 +68,28 @@ export type BuiltinAgentName =
   | "Metis (Plan Consultant)"
   | "Momus (Plan Reviewer)"
   | "orchestrator-sisyphus"
+  // Arcanea Development Team
   | "arcanea-architect"
   | "arcanea-coder"
   | "arcanea-reviewer"
   | "arcanea-debugger"
+  // Arcanea Creative Team
+  | "arcanea-story-master"
+  | "arcanea-character-crafter"
+  | "arcanea-world-expander"
+  | "arcanea-lore-master"
+  // Arcanea Writing Team
+  | "arcanea-prose-weaver"
+  | "arcanea-voice-alchemist"
+  | "arcanea-line-editor"
+  | "arcanea-continuity-guardian"
+  // Arcanea Research Team
+  | "arcanea-sage"
+  | "arcanea-archivist"
+  | "arcanea-scout"
+  | "arcanea-muse"
+  // Master Orchestrator
+  | "arcanea-master-orchestrator"
 
 export type OverridableAgentName =
   | "build"

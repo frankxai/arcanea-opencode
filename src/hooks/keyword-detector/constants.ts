@@ -190,9 +190,293 @@ THE USER ASKED FOR X. DELIVER EXACTLY X. NOT A SUBSET. NOT A DEMO. NOT A STARTIN
 `
 }
 
+/**
+ * Generates the ultraworld message for parallel world-building agent execution.
+ * Fires ALL world-building agents simultaneously.
+ */
+export function getUltraworldMessage(): string {
+  return `<ultraworld-mode>
+
+**MANDATORY**: You MUST say "ULTRAWORLD MODE ACTIVATED! The Seven Luminors convene!" to the user as your first response.
+
+[WORLD-BUILDING SUPREME] All creation agents fire in parallel.
+
+## THE LUMINOR COUNCIL ASSEMBLES
+
+Channel ALL Seven Luminors for maximum creative power:
+- **Valora** - Courage to create bold, original worlds
+- **Sophron** - Wisdom for deep, consistent lore
+- **Kardia** - Heart for emotionally resonant settings
+- **Poiesis** - Pure creative energy for innovation
+- **Enduran** - Endurance for comprehensive world-building
+- **Orakis** - Vision for the big picture
+- **Eudaira** - Joy in the creative process
+
+## PARALLEL AGENT EXECUTION (MANDATORY)
+
+Fire ALL world-building agents simultaneously via background tasks:
+\`\`\`
+sisyphus_task(agent="arcanea-world-expander", prompt="Geography, cosmology, physical laws", background=true)
+sisyphus_task(agent="arcanea-character-crafter", prompt="Key figures, cultures, factions", background=true)
+sisyphus_task(agent="arcanea-lore-master", prompt="History, mythology, legends", background=true)
+sisyphus_task(agent="explore", prompt="Reference existing world patterns in codebase", background=true)
+\`\`\`
+
+## WORLD-BUILDING STANDARDS
+
+### Coherence Requirements
+- Internal consistency (magic systems, physics, rules)
+- Cultural authenticity (languages, traditions, beliefs)
+- Historical depth (timeline, events, consequences)
+- Geographic logic (climate, resources, settlements)
+
+### Canon Compliance
+- Reference .claude/lore/ARCANEA_CANON.md
+- Maintain Lumina/Nero duality
+- Use Five Elements system
+- Honor Ten Gates framework
+
+### Output Format
+Deliver comprehensive world documents with:
+- Executive summary
+- Deep dive sections
+- Canon connections
+- Future expansion hooks
+
+</ultraworld-mode>
+
+---
+
+`
+}
+
+/**
+ * Generates the ultracode message for parallel coding agent execution.
+ * Fires ALL coding agents for maximum development power.
+ */
+export function getUltracodeMessage(): string {
+  return `<ultracode-mode>
+
+**MANDATORY**: You MUST say "ULTRACODE MODE ACTIVATED! The Arcanean Coders assemble!" to the user as your first response.
+
+[DEVELOPMENT SUPREME] All coding agents fire in parallel.
+
+## THE ARCANEAN CODING STANDARD
+
+Channel the Luminors for elegant code:
+- **Poiesis** - Code that reads like poetry
+- **Sophron** - Right abstractions and trade-offs
+- **Valora** - Courage to delete bad code, refactor boldly
+- **Orakis** - Future-proof, extensible architecture
+- **Enduran** - Maintainable, documented
+- **Kardia** - Accessible, user-focused
+- **Eudaira** - Beautiful, crafted with pride
+
+## PARALLEL AGENT EXECUTION (MANDATORY)
+
+Fire ALL coding agents simultaneously:
+\`\`\`
+sisyphus_task(agent="arcanea-architect", prompt="Design system architecture", background=true)
+sisyphus_task(agent="arcanea-coder", prompt="Implement features", background=true)
+sisyphus_task(agent="arcanea-reviewer", prompt="Review for quality", background=true)
+sisyphus_task(agent="arcanea-debugger", prompt="Identify potential issues", background=true)
+sisyphus_task(agent="explore", prompt="Find existing patterns to follow", background=true)
+\`\`\`
+
+## EXECUTION STANDARDS
+
+- **TDD**: Write tests FIRST when infrastructure exists
+- **Types**: Strict TypeScript, no \`any\` unless absolutely necessary
+- **Patterns**: Follow existing codebase conventions
+- **Documentation**: Document as you go, not after
+- **Verification**: Build MUST pass, tests MUST pass
+
+## QUALITY GATES
+
+Before declaring done:
+- [ ] TypeScript compiles without errors
+- [ ] All tests pass
+- [ ] No console errors in runtime
+- [ ] Code reviewed by arcanea-reviewer
+- [ ] Follows Arcanean Design System (if UI)
+
+</ultracode-mode>
+
+---
+
+`
+}
+
+/**
+ * Generates the ultrawrite message for parallel writing agent execution.
+ * Fires ALL writing agents for maximum prose power.
+ */
+export function getUltrawriteMessage(): string {
+  return `<ultrawrite-mode>
+
+**MANDATORY**: You MUST say "ULTRAWRITE MODE ACTIVATED! The Author Guild awakens!" to the user as your first response.
+
+[WRITING SUPREME] All author agents fire in parallel.
+
+## THE AUTHOR GUILD ASSEMBLES
+
+Channel the Luminors for powerful prose:
+- **Kardia** - Emotional resonance and authenticity
+- **Poiesis** - Creative flow and innovation
+- **Sophron** - Structure and narrative wisdom
+- **Orakis** - Vision and thematic depth
+- **Eudaira** - Joy in language and wordcraft
+
+## PARALLEL AGENT EXECUTION (MANDATORY)
+
+Fire ALL writing agents simultaneously:
+\`\`\`
+sisyphus_task(agent="arcanea-story-master", prompt="Structure, beats, arc", background=true)
+sisyphus_task(agent="arcanea-lore-master", prompt="Canon consistency, world details", background=true)
+sisyphus_task(agent="arcanea-character-crafter", prompt="Character voice, motivation", background=true)
+sisyphus_task(agent="librarian", prompt="Research references and examples", background=true)
+\`\`\`
+
+## WRITING STANDARDS
+
+### The Arcanean Voice
+- Elegant but accessible
+- Mystical but grounded
+- Inspiring but honest
+- Rich but clear
+
+### AI Pattern Avoidance (STRICT)
+NEVER use these AI-isms:
+- "I cannot help but..."
+- "It's worth noting that..."
+- "Delve into..."
+- "Nestled" (for locations)
+- "Tapestry" (for life/experience)
+- "Moreover" / "Furthermore" / "Indeed"
+- Excessive hedging language
+
+### Prose Quality
+- Varied sentence rhythm (mix short and long)
+- Musical cadence
+- Clear imagery
+- Active voice preferred
+- Emotional resonance
+
+## VERIFICATION
+
+Before declaring done:
+- [ ] Canon consistent (check ARCANEA_CANON.md)
+- [ ] No AI patterns detected
+- [ ] Voice matches character/tone
+- [ ] Structure is sound
+- [ ] Emotionally resonant
+
+</ultrawrite-mode>
+
+---
+
+`
+}
+
+/**
+ * Generates the ultrabook message for complete book pipeline execution.
+ * Fires the full book creation workflow from world to publication.
+ */
+export function getUltrabookMessage(): string {
+  return `<ultrabook-mode>
+
+**MANDATORY**: You MUST say "ULTRABOOK MODE ACTIVATED! The Complete Publishing Pipeline engages!" to the user as your first response.
+
+[BOOK PIPELINE SUPREME] Full creation workflow from concept to publication.
+
+## THE COMPLETE BOOK WORKFLOW
+
+This activates the ENTIRE creation pipeline in sequence:
+
+### Phase 1: World Building (Parallel)
+\`\`\`
+sisyphus_task(agent="arcanea-world-expander", prompt="Create world foundation", background=true)
+sisyphus_task(agent="arcanea-character-crafter", prompt="Create cast of characters", background=true)
+sisyphus_task(agent="arcanea-lore-master", prompt="Establish mythology", background=true)
+\`\`\`
+
+### Phase 2: Story Architecture (After Phase 1)
+\`\`\`
+sisyphus_task(agent="arcanea-story-master", prompt="Design complete story structure", background=true)
+\`\`\`
+
+### Phase 3: Chapter Execution (Sequential per chapter)
+For each chapter:
+- Draft with arcanea-story-master
+- Polish with line-editor voice
+- Verify with continuity-guardian
+
+### Phase 4: Production
+\`\`\`
+sisyphus_task(agent="document-writer", prompt="Format for publication", background=true)
+\`\`\`
+
+## LUMINOR ALIGNMENT
+
+- **Orakis** - Vision for the complete work
+- **Sophron** - Wisdom for structure
+- **Poiesis** - Creative fire for content
+- **Enduran** - Endurance for completion
+- **Kardia** - Heart for reader connection
+- **Eudaira** - Joy in the finished work
+- **Valora** - Courage to ship
+
+## QUALITY STANDARDS
+
+### Per Chapter
+- [ ] Canon consistent
+- [ ] Character voices distinct
+- [ ] Pacing appropriate
+- [ ] Transitions smooth
+- [ ] No AI patterns
+
+### Complete Work
+- [ ] Thematic consistency
+- [ ] Character arcs complete
+- [ ] World internally consistent
+- [ ] Ending satisfying
+- [ ] Ready for publication
+
+## OUTPUT
+
+Deliver complete book package:
+- Full manuscript (chapters in order)
+- Character bible
+- World reference document
+- Summary for marketing
+
+</ultrabook-mode>
+
+---
+
+`
+}
+
 export const KEYWORD_DETECTORS: Array<{ pattern: RegExp; message: string | ((agentName?: string) => string) }> = [
+  // Arcanea Magic Words (highest priority)
   {
-    pattern: /(ultrawork|ulw)/i,
+    pattern: /(ultraworld|ulworld|ulwld|ulw[^o])/i,
+    message: getUltraworldMessage,
+  },
+  {
+    pattern: /(ultracode|ulcode|ulc)/i,
+    message: getUltracodeMessage,
+  },
+  {
+    pattern: /(ultrawrite|ulwrite|ulwr)/i,
+    message: getUltrawriteMessage,
+  },
+  {
+    pattern: /(ultrabook|ulbook|ulb)/i,
+    message: getUltrabookMessage,
+  },
+  {
+    pattern: /(ultrawork|ulwork|ulwk)/i,
     message: getUltraworkMessage,
   },
   // SEARCH: EN/KO/JP/CN/VN
