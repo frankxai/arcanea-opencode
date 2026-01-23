@@ -7,5 +7,5 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #801 | 1:41 PM | 🔵 | Arcanea Agent Defaults Already Set to OpenCode Free Models | ~478 |
+| #749 | 1:18 PM | 🔵 | Thinking Block Validator Hook Design and Claude Model Support | ~486 |
 </claude-mem-context>

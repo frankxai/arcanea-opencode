@@ -14,6 +14,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #812 | 3:49 PM | 🔵 | Plugin Loading Infrastructure Uses agentSources Registry and Claude Code Plugin Loader | ~508 |
+| #811 | " | 🔵 | Plugin Entry Point Defines Hook Registration and Feature Initialization | ~507 |
+| #759 | 1:20 PM | 🔵 | No Direct "Invalid Signature" Error Messages in Source Code | ~399 |
 | #747 | 1:18 PM | 🔵 | Thinking Block Validator Hook Identified in Codebase | ~418 |
 | #744 | 1:17 PM | 🔵 | Plugin Source Code Structure with 100+ TypeScript Files | ~471 |
 </claude-mem-context>

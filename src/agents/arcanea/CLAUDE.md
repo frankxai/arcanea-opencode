@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #871 | 5:02 PM | 🔵 | Arcanea Orchestrator Magic Words Use sisyphus_task with Background Execution | ~604 |
+| #869 | " | 🔵 | Arcanea Agent Directory Contains Two Core TypeScript Files | ~376 |
 | #753 | 1:19 PM | 🔵 | Complete Arcanea Agent System with 17 Specialized Agents Across Four Teams | ~636 |
 | #751 | 1:18 PM | 🔵 | Arcanea Orchestrator Agent Implementation with Seven Wisdoms Framework | ~568 |
 </claude-mem-context>
