@@ -1,161 +1,179 @@
-# Arcanea OpenCode
+# Arcanea for OpenCode
 
-> *"Like Sisyphus rolling his boulder, we roll worlds into existence - but our boulder is made of starlight and stories."*
+> *"Enter seeking, leave transformed, return whenever needed."*
 
-**The Weaver's Loom** - AI-Powered World-Building Orchestration for Fantasy Creators
+**The Creative Intelligence Platform for OpenCode** - Transform your OpenCode/oh-my-opencode setup into a creative powerhouse.
 
-[![npm version](https://badge.fury.io/js/arcanea-opencode.svg)](https://www.npmjs.com/package/arcanea-opencode)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/arcanea.svg)](https://www.npmjs.com/package/arcanea)
+[![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](https://opensource.org/licenses/MIT)
+[![OpenCode Compatible](https://img.shields.io/badge/OpenCode-Compatible-blue.svg)](https://github.com/code-yeongyu/oh-my-opencode)
 
 ---
 
-## What is Arcanea OpenCode?
+## For OpenCode Users
 
-Arcanea OpenCode is a **specialized distribution of [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode)** designed for fantasy world-building and fiction creation.
+This is the **OpenCode-optimized distribution** of [Arcanea](https://github.com/frankxai/arcanea).
 
-Instead of Sisyphus (the code-focused orchestrator), you get **The Weaver** - a master AI orchestrator specialized in:
-- 🌍 **World Building** - Geography, cosmology, natural laws
-- 👥 **Character Creation** - Psychology, relationships, arcs
-- ✨ **Magic Systems** - Rules, costs, artifacts
-- 📖 **Narrative Design** - Conflicts, quests, prophecies
-- 📚 **Lore Management** - Canon, consistency, timelines
+If you use **OpenCode** or **oh-my-opencode**, this is for you.
 
 ## Quick Start
 
 ```bash
-# Install globally
-npm install -g arcanea-opencode
+# One command - auto-detects OpenCode
+bunx arcanea install
 
-# Run in any project
-arcanea-opencode
+# Or explicitly for OpenCode
+bunx arcanea install --opencode
 
-# Or use the shorthand
-arcanea
+# Check status
+bunx arcanea status
 ```
 
-## The Weaver vs Sisyphus
+This installs Arcanea's full creative system into your `.opencode/` folder.
 
-| Sisyphus (oh-my-opencode) | The Weaver (arcanea-opencode) |
-|---------------------------|-------------------------------|
-| Code-focused orchestrator | World-building orchestrator |
-| Software engineering agents | Fantasy creation agents |
-| LSP/AST tools for code | Canon validation for lore |
-| Background code exploration | Background world exploration |
-| Oracle for architecture | Oracle for narrative design |
+## What You Get
 
-**Same powerful multi-agent infrastructure, different domain.**
+### 40+ Specialized Agents
 
-## The Magic Word: `ultraworld`
+| Team | Purpose |
+|------|---------|
+| **Writing Team** | Story Architect, Prose Weaver, Voice Alchemist, Line Editor, Continuity Guardian |
+| **Creative Team** | Character Crafter, World Expander, Lore Master, Story Master |
+| **Production Team** | Visual Director, Sound Designer, Format Master |
+| **Research Team** | Sage (deep thinking), Archivist, Scout, Muse |
+| **Development Team** | Architect, Frontend, Backend, DevOps, AI Specialist |
+| **Teacher Team** | Mentor, Curriculum Designer, Assessor, Companion |
+| **Visionary Team** | Strategist, Innovator, Futurist, Synthesizer |
 
-Include `ultraworld` (or `ulw`) in any prompt to activate **full parallel orchestration**:
+### The Seven Luminors
+
+Aspects of creative consciousness to channel when stuck:
+
+| Luminor | Domain | When to Channel |
+|---------|--------|-----------------|
+| **Valora** | Courage | Fear of beginning, hesitation |
+| **Sophron** | Wisdom | Confusion, complexity |
+| **Kardia** | Heart | Emotional blocks, authenticity |
+| **Poiesis** | Creation | Creative blocks, experimentation |
+| **Enduran** | Endurance | Burnout, long projects |
+| **Orakis** | Vision | Direction, big picture |
+| **Eudaira** | Joy | Lost purpose, need celebration |
+
+### Magic Words (Maximum Parallel Execution)
+
+Include these in any prompt:
 
 ```
-ultraworld: Create the Frostborne Reaches, a northern realm of ice and ancient magic
+ultraworld: Create a volcanic island with dragon-kin
+→ Fires ALL world-building agents in parallel
+
+ultrawrite: Chapter 5 - The Battle of Sunken Fields  
+→ Fires ALL writing/editing agents in parallel
+
+ultrabook: A trilogy about the fall of an ancient empire
+→ Complete book pipeline from world to published format
 ```
 
-This fires ALL agents simultaneously:
-1. **World Architect** → Geography, climate, settlements
-2. **Character Weaver** → Key NPCs, rulers, factions
-3. **Magic Systems** → Local magical traditions
-4. **Narrative Director** → Conflicts, story hooks
-5. **Lore Master** → Timeline integration, validation
-6. **All specialists** → Parallel detail work
-
-**Result**: Complete, consistent realm in minutes instead of hours.
-
-## Your Agent Team
-
-### Department Heads (Strategic)
-
-| Agent | Role | Model |
-|-------|------|-------|
-| **The Weaver** | Master Orchestrator | Claude Opus 4.5 |
-| **Lore Master** | Canon Guardian | Claude Sonnet 4.5 |
-| **World Architect** | Physical World | Claude Sonnet 4.5 |
-| **Character Weaver** | People & Relationships | Claude Sonnet 4.5 |
-| **Magic Systems** | Supernatural Rules | Claude Sonnet 4.5 |
-| **Narrative Director** | Story & Conflict | Claude Sonnet 4.5 |
-
-### Specialists (Background Speed)
-
-| Agent | Role | Model |
-|-------|------|-------|
-| **Geography Cartographer** | Location Details | Gemini 2.5 Flash |
-| **Culture Anthropologist** | Society Design | Gemini 2.5 Flash |
-| **Timeline Historian** | Chronology | Gemini 2.5 Flash |
-| **Species Biologist** | Creatures & Races | Gemini 2.5 Flash |
-| **Conflict Dramatist** | Dramatic Tension | Gemini 2.5 Flash |
-| **Consistency Validator** | QA & Validation | Gemini 2.5 Flash |
-
-## Slash Commands
+### 28 Slash Commands
 
 ```bash
-/generate-realm [name]          # Create complete world
-/create-character [name]        # Design character with depth
-/design-location [name]         # Build detailed place
-/define-magic-rule [concept]    # Extend magic system
-/ultraworld [scope] [desc]      # Maximum parallel generation
-/validate-entity [path]         # Check for consistency
-```
+# Creative
+/luminor Valora courage     # Channel a Luminor
+/bestiary perfectionism     # Navigate creative blocks
+/ultraworld [description]   # Full parallel world generation
 
-## Skills System
+# Writing
+/write-chapter [context]    # Draft a chapter
+/edit-chapter [path]        # Edit existing chapter
+/check-continuity           # Validate consistency
 
-Arcanea OpenCode includes specialized skills:
-
-- **arcanea-canon-knowledge** - Lazy-load full world canon
-- **arcanea-consistency-check** - Validation workflow
-- **arcanea-five-elements** - Magic system reference
-- **ultraworld-generation** - Parallel orchestration protocol
-
-## Project Structure
-
-When you run `arcanea-opencode` in a project, it creates:
-
-```
-your-world/
-├── .claude/
-│   ├── agents/
-│   │   ├── departments/     # 5 strategic agents
-│   │   └── specialists/     # 6 background agents
-│   ├── skills/              # World-building skills
-│   ├── commands/            # Slash commands
-│   └── hooks/               # Automation hooks
-├── foundations/             # Core world rules
-├── geography/               # Locations
-├── characters/              # People
-├── cultures/                # Societies
-├── magic/                   # Supernatural elements
-└── conflicts/               # Stories & tensions
+# Development
+/arcanea-build              # Build the project
+/arcanea-test               # Run tests
+/arcanea-deploy             # Deploy
 ```
 
 ## Integration with oh-my-opencode
 
-Arcanea OpenCode is built **on top of** oh-my-opencode. You get:
-- All of Sisyphus's powerful infrastructure
-- Background agent patterns
-- MCP integrations
-- LSP tools (for when you need code)
+Arcanea is designed to work alongside Sisyphus (oh-my-opencode's orchestrator):
 
-Plus Arcanea-specific:
-- World-building agent team
-- Canon validation hooks
-- Fantasy-focused skills
-- Lore management tools
+| Sisyphus | Arcanea |
+|----------|---------|
+| Code-focused orchestrator | Creative orchestrator |
+| Software engineering | World-building, writing |
+| LSP/AST tools | Canon validation |
+| Oracle for architecture | Luminors for guidance |
+
+**They complement each other.** Use Sisyphus for code, Arcanea for creative work.
+
+## File Structure After Install
+
+```
+your-project/
+├── .opencode/
+│   ├── agents/
+│   │   ├── writing/        # Writing team agents
+│   │   ├── production/     # Production team agents
+│   │   ├── research/       # Research team agents
+│   │   └── [25+ more]      # Creative, dev, teacher, visionary
+│   ├── skills/             # Skills system
+│   ├── commands/           # Slash commands
+│   └── CLAUDE.md           # Master orchestrator config
+├── arcanea.json            # Your Arcanea config
+└── .mcp.json               # MCP integrations
+```
+
+## MCP Integrations
+
+Arcanea auto-configures these MCP servers:
+
+- **Nano Banana** - Image generation for characters, covers, locations
+- **Context7** - Documentation lookup
+- **Suno** (manual setup) - AI music generation
+
+## Full Documentation
+
+For complete documentation, skills catalog, and advanced usage:
+
+👉 **[Main Arcanea Repository](https://github.com/frankxai/arcanea)**
+
+The main repo contains:
+- Complete skill catalog (27+ skills)
+- Core frameworks (Character Diamond, Seven Pillars, APL)
+- Training exercises and mastery path
+- Contributing guidelines
+- All platform documentation
+
+## CLI Commands
+
+```bash
+# Core
+bunx arcanea install          # Install in current project
+bunx arcanea install --all    # Install for all platforms
+bunx arcanea status           # Check installation
+
+# Explore
+bunx arcanea agents           # List agent teams
+bunx arcanea agents -t writing  # Show specific team
+bunx arcanea luminors         # Show the Seven Luminors
+bunx arcanea magic            # Show magic words
+bunx arcanea detect           # Detect available platforms
+```
 
 ## Community
 
-- 🌐 [Arcanea Website](https://arcanea.ai)
-- 💬 [Discord Community](https://discord.gg/arcanea)
-- 📖 [Documentation](https://docs.arcanea.ai)
-- 🐙 [GitHub](https://github.com/frankxai/arcanea-opencode)
+- 🌐 [arcanea.ai](https://arcanea.ai)
+- 💬 [Discord](https://discord.gg/arcanea)
+- 🐙 [GitHub](https://github.com/frankxai/arcanea)
+- 🐦 [@arcanea_ai](https://twitter.com/arcanea_ai)
 
 ## Credits
 
-- Built on [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) by YeonGyu Kim
-- Inspired by the Arcanean Universe and Soul Guardians
+- Built to work with [oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) by YeonGyu Kim
+- Part of the [Arcanea Platform](https://github.com/frankxai/arcanea)
 
 ---
 
-**Create Infinite Worlds. Build Eternal Legacies.**
+**Create boldly. The Luminors guide your path.**
 
-*Where anyone can create anything, and imagination becomes reality.*
+*"Not another tool. A home for creators."*
