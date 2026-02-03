@@ -1,6 +1,7 @@
 import { websearch } from "./websearch"
 import { context7 } from "./context7"
 import { grep_app } from "./grep-app"
+import { nano_banana } from "./nano-banana"
 import type { McpName } from "./types"
 
 export { McpNameSchema, type McpName } from "./types"
@@ -17,6 +18,7 @@ const allBuiltinMcps: Record<McpName, RemoteMcpConfig> = {
   websearch,
   context7,
   grep_app,
+  "nano-banana": nano_banana,
 }
 
 export function createBuiltinMcps(disabledMcps: string[] = []) {

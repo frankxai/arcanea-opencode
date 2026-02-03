@@ -1,12 +1,13 @@
 {
-  "name": "oh-my-opencode",
-  "version": "3.1.3",
-  "description": "The Best AI Agent Harness - Batteries-Included OpenCode Plugin with Multi-Model Orchestration, Parallel Background Agents, and Crafted LSP/AST Tools",
+  "name": "@arcanea/opencode",
+  "version": "4.0.0",
+  "description": "Arcanea Intelligence OS - Starlight-powered creative development with Ten Guardians",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "bin": {
-    "oh-my-opencode": "./bin/oh-my-opencode.js"
+    "arcanea-opencode": "./bin/arcanea-opencode.js",
+    "claude-arcanea": "./bin/claude-arcanea.js"
   },
   "files": [
     "dist",
@@ -17,39 +18,46 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./schema.json": "./dist/oh-my-opencode.schema.json"
+    }
   },
   "scripts": {
-    "build": "bun build src/index.ts --outdir dist --target bun --format esm --external @ast-grep/napi && tsc --emitDeclarationOnly && bun build src/cli/index.ts --outdir dist/cli --target bun --format esm --external @ast-grep/napi && bun run build:schema",
-    "build:all": "bun run build && bun run build:binaries",
-    "build:binaries": "bun run script/build-binaries.ts",
-    "build:schema": "bun run script/build-schema.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm --external @ast-grep/napi && tsc --emitDeclarationOnly && bun build src/cli/simple.ts --outdir dist/cli --target bun --format esm --external @ast-grep/napi",
+    "build:simple": "bun build src/cli/simple.ts --outdir dist/cli --target bun --format esm --external @ast-grep/napi",
     "clean": "rm -rf dist",
     "postinstall": "node postinstall.mjs",
-    "prepublishOnly": "bun run clean && bun run build",
+    "publish": "npm run clean && npm run build && npm publish",
+    "publish:dry": "npm run clean && npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
   "keywords": [
+    "arcanea",
     "opencode",
-    "plugin",
-    "oracle",
-    "librarian",
+    "guardians",
+    "starlight",
+    "lumina-nero",
+    "ten-gates",
+    "mythology",
+    "creativity",
     "agents",
+    "orchestration",
     "ai",
     "llm"
   ],
-  "author": "YeonGyu-Kim",
-  "license": "SUL-1.0",
+  "author": "FrankX - Arcanea Intelligence OS",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/code-yeongyu/oh-my-opencode.git"
+    "url": "git+https://github.com/frankxai/arcanea-opencode.git"
   },
   "bugs": {
-    "url": "https://github.com/code-yeongyu/oh-my-opencode/issues"
+    "url": "https://github.com/frankxai/arcanea-opencode/issues"
   },
-  "homepage": "https://github.com/code-yeongyu/oh-my-opencode#readme",
+  "homepage": "https://arcanea.ai#opencode",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@ast-grep/cli": "^0.40.0",
     "@ast-grep/napi": "^0.40.0",

@@ -1,0 +1,24 @@
+{
+  "name": "@arcanea/claude",
+  "version": "1.0.0",
+  "description": "Claude Code integration for Arcanea Intelligence OS",
+  "main": "bin/claude-arcanea.js",
+  "bin": {
+    "claude-arcanea": "./bin/claude-arcanea.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "keywords": ["arcanea", "claude-code", "ai", "wisdom"],
+  "author": "FrankX - Arcanea Intelligence OS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frankxai/arcanea-opencode.git"
+  },
+  "scripts": {
+    "build": "bun build src/cli.ts --outdir dist/cli --target node --format esm",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {}
+}
