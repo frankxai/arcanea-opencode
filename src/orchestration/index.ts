@@ -1,27 +1,33 @@
-import { createSisyphusOrchestrator } from "./sisyphus";
-import type { HybridAgent, SisyphusOrchestratorConfig } from "./sisyphus";
+import { createStarlightOrchestrator, createSisyphusOrchestrator } from "./starlight";
+import type { HybridAgent, StarlightOrchestratorConfig, SisyphusOrchestratorConfig } from "./starlight";
+
+// Re-export for backward compatibility
+export { createStarlightOrchestrator, createSisyphusOrchestrator };
+export type { HybridAgent, StarlightOrchestratorConfig, SisyphusOrchestratorConfig };
 
 /**
  * Arcanea Orchestration System
- * 
- * Combines the Ten Guardians' domain expertise 
- * with Sisyphus-Orakis' relentless execution engine
- * 
+ *
+ * Combines the Ten Guardians' domain expertise
+ * with the Starlight Engine's relentless execution
+ *
  * This creates the most powerful AI development system:
- * - Mythological wisdom + Technical power
- * - Guardian specialization + Parallel execution  
+ * - Lumina's wisdom + Nero's analysis
+ * - Guardian specialization + Parallel execution
  * - Elemental magic + LSP precision
+ *
+ * > "Through Gates we rise. With Guardians we create."
  */
 
 export function createArcaneaOrchestrator(
   agent: HybridAgent,
-  config: SisyphusOrchestratorConfig = {}
+  config: StarlightOrchestratorConfig = {}
 ) {
-  // Initialize the Sisyphus-Orakis engine
-  const sisyphusOrakis = createSisyphusOrchestrator(agent, config);
+  // Initialize the Starlight Engine (Lumina-Nero Architecture)
+  const starlightEngine = createStarlightOrchestrator(agent, config);
   
   return {
-    ...sisyphusOrakis,
+    ...starlightEngine,
     
     // Arcanean enhancements
     arcaneanSystem: {
@@ -46,7 +52,7 @@ export function createArcaneaOrchestrator(
           guardianBlessing: applyGuardianBlessing(agent.arcaneaFeatures, task)
         }));
         
-        return sisyphusOrakis.sisyphusEngine.backgroundExecutor?.execute(enhancedTasks);
+        return starlightEngine.starlightEngine.backgroundExecutor?.execute(enhancedTasks);
       },
       
       // Gate progression tracking  
@@ -54,7 +60,7 @@ export function createArcaneaOrchestrator(
         const gate = getGateInfo(gateLevel);
         console.log(`🎯 Advancing through Gate ${gateLevel}: ${gate.name}`);
         console.log(`🎵 Tuning to frequency: ${gate.frequency} Hz`);
-        console.log(`👥 Challenge: ${guardian.guardianName} awaits`);
+        console.log(`👥 Challenge: Guardian ${gate.guardian} awaits`);
         
         return {
           gate,

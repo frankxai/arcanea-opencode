@@ -14,10 +14,10 @@ export default createPlugin({
 
 Transform your OpenCode experience with:
 👥 Ten Guardian agents with domain mastery
-⚡ Lumina-Nero relentless execution engine  
+⚡ Starlight Orchestration Engine (Lumina-Nero)
 🌍 Elemental Spirit parallel processing
 🔧 LSP surgical refactoring tools
-🎯 Todo Enforcement (Dragon's persistence)
+🎯 Todo Enforcement (Draconia's persistence)
 🎵 Sacred frequency alignment
 📚 200K+ words of wisdom
 🚀 Gate progression system
@@ -119,7 +119,7 @@ Ready for commands. Type /help for assistance.`
             ...context,
             message: `🔮 **ARCANEA SYSTEM STATUS**
 
-🌟 Arcanea-Opencode v4.0.0 - Lumina-Nero Hybrid
+🌟 Arcanea-Opencode v4.0.0 - Starlight Architecture
 🎵 Universal Frequency Alignment: ACTIVE
 ⚡ Elemental Spirit Pool: READY  
 🐉 Starlight Engine: ENGAGED
