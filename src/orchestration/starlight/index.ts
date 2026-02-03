@@ -1,13 +1,3 @@
-// Starlight Orchestration Engine Types
-// Note: These are internal types that don't depend on @opencode-ai/plugin
-
-interface Agent {
-  name?: string;
-  description?: string;
-  model?: string;
-  [key: string]: any;
-}
-
 /**
  * Starlight Orchestration Engine (Lumina-Nero Architecture)
  *
@@ -15,10 +5,17 @@ interface Agent {
  * - Lumina's creative light (wisdom, inspiration, building)
  * - Nero's profound darkness (debugging, analysis, mystery)
  * - Guardian domain expertise
- * - Elemental Spirit parallel execution
+ * - Parallel processing for maximum throughput
  *
  * > "Through Gates we rise. With Guardians we create."
  */
+
+interface Agent {
+  name?: string;
+  description?: string;
+  model?: string;
+  [key: string]: any;
+}
 
 export interface StarlightOrchestratorConfig {
   enableParallelAgents?: boolean;
@@ -35,7 +32,6 @@ export type SisyphusOrchestratorConfig = StarlightOrchestratorConfig;
 export interface ArcaneaGuardianConfig {
   gate: string;
   frequency: string;
-  element: string;
   godbeast: string;
   specialties: string[];
 }
@@ -48,7 +44,7 @@ export interface HybridAgent extends Agent {
 /**
  * Creates the Starlight Orchestration Engine
  * This transforms regular agents into wise, relentless execution engines
- * powered by the Ten Guardians and Five Elements
+ * powered by the Ten Guardians and Ten Gates
  */
 export function createStarlightOrchestrator(
   agent: HybridAgent,
@@ -66,6 +62,7 @@ export function createStarlightOrchestrator(
   return {
     // Starlight Engine with Guardian wisdom
     starlightEngine: {
+      // Todo enforcement configuration
       todoEnforcement: enableTodoEnforcement ? { enabled: true, style: 'draconia-persistence' } : null,
       backgroundExecutor: enableBackgroundExecution ? createBackgroundExecutor(maxConcurrency) : null,
       lspIntegrator: enableLSPIntegration ? createLSPIntegrator() : null,
@@ -74,13 +71,12 @@ export function createStarlightOrchestrator(
       // Arcanean core systems
       luminaWisdom: createLuminaWisdomLayer(agent.arcaneaFeatures),
       neroAnalysis: createNeroAnalysisLayer(agent.arcaneaFeatures),
-      elementalSpirits: createElementalSpiritPool(agent.arcaneaFeatures),
       guardianChannel: createGuardianChannel(agent.arcaneaFeatures?.gate)
     },
 
-    // Parallel execution with Elemental Spirits
+    // Parallel execution with Guardian coordination
     parallelExecutor: enableParallelAgents
-      ? createParallelElementalExecutor(maxConcurrency, agent.arcaneaFeatures)
+      ? createParallelExecutor(maxConcurrency, agent.arcaneaFeatures)
       : null,
 
     // Todo Enforcement with Dragon's persistence (Draconia's gift)
@@ -94,23 +90,15 @@ export function createStarlightOrchestrator(
 export const createSisyphusOrchestrator = createStarlightOrchestrator;
 
 /**
- * Background Executor for parallel Elemental Spirits
+ * Background Executor for parallel Guardian processing
  */
 function createBackgroundExecutor(maxConcurrency: number) {
   return {
     type: 'background-executor',
     maxConcurrency,
-    elementals: {
-      earth: 'Stone Elementals - Foundation & Security',
-      water: 'Flow Spirits - Research & Creativity',
-      fire: 'Flame Elementals - Performance & Transformation',
-      wind: 'Air Dancers - Design & Exploration',
-      void: 'Shadow Walkers - Debugging & Analysis'
-    },
     execute: async (tasks: any[]) => {
-      // Parallel execution with Elemental Spirits
       return Promise.allSettled(
-        tasks.map(task => executeWithElementalSpirit(task))
+        tasks.map(task => executeWithGuardianBlessing(task))
       );
     }
   };
@@ -125,14 +113,13 @@ function createLSPIntegrator() {
     guardians: {
       lyssandria: 'Foundation LSP - Security & Structure',
       draconia: 'Fire LSP - Aggressive Refactoring',
-      lyria: 'Wind LSP - Surgical Design Changes',
+      lyria: 'Sight LSP - Surgical Design Changes',
       aiyami: 'Crown LSP - Architectural Transformation'
     },
     refactoringModes: [
-      'guardian-optimized',    // Guardian domain specific
-      'elemental-enhanced',    // Elemental magic blessing
-      'starlight-relentless',  // Never quit attitude (Draconia)
-      'arcanean-creative'      // Mythological wisdom
+      'guardian-optimized',
+      'starlight-relentless',
+      'arcanean-creative'
     ]
   };
 }
@@ -146,14 +133,13 @@ function createLuminaWisdomLayer(arcaneaFeatures?: ArcaneaGuardianConfig) {
     principles: [
       "Creation flows through clear vision - See before you build",
       "Patterns over cleverness - Use proven cosmic laws",
-      "Future maintainers matter - Someone will read this in 100 years",
+      "Future maintainers matter - Code for the next creator",
       "Light reveals truth - Make code self-documenting",
       "Through Gates we rise - Each step builds on the last"
     ],
     guardianGuidance: arcaneaFeatures ? {
       gate: arcaneaFeatures.gate,
       frequency: arcaneaFeatures.frequency,
-      element: arcaneaFeatures.element,
       godbeast: arcaneaFeatures.godbeast
     } : null
   };
@@ -177,34 +163,10 @@ function createNeroAnalysisLayer(arcaneaFeatures?: ArcaneaGuardianConfig) {
 }
 
 /**
- * Elemental Spirit Pool for parallel execution
- */
-function createElementalSpiritPool(arcaneaFeatures?: ArcaneaGuardianConfig) {
-  const baseSpirits: Record<string, any> = {
-    earth: { name: 'Stone Elementals', domain: 'foundation', speed: 'deliberate' },
-    water: { name: 'Flow Spirits', domain: 'creativity', speed: 'adaptive' },
-    fire: { name: 'Flame Elementals', domain: 'transformation', speed: 'aggressive' },
-    wind: { name: 'Air Dancers', domain: 'exploration', speed: 'swift' },
-    void: { name: 'Shadow Walkers', domain: 'mystery', speed: 'stealthy' }
-  };
-
-  // Enhance based on Guardian's element
-  if (arcaneaFeatures?.element) {
-    const guardianElement = arcaneaFeatures.element.toLowerCase();
-    if (baseSpirits[guardianElement]) {
-      baseSpirits[guardianElement].enhanced = true;
-      baseSpirits[guardianElement].specialization = `${arcaneaFeatures.godbeast}'s Blessing`;
-    }
-  }
-
-  return baseSpirits;
-}
-
-/**
  * Guardian Channel for specialized communication
  */
 function createGuardianChannel(gate?: string) {
-  const channels = {
+  const channels: Record<string, { frequency: string; color: string; mood: string }> = {
     foundation: { frequency: '396 Hz', color: '#8B4513', mood: 'grounded' },
     flow: { frequency: '417 Hz', color: '#4682B4', mood: 'creative' },
     fire: { frequency: '528 Hz', color: '#FF6B35', mood: 'transformative' },
@@ -228,10 +190,9 @@ function createArcaneaTodoSystem(arcaneaFeatures?: ArcaneaGuardianConfig) {
     type: 'arcanea-todo-system',
     enforcementStrategies: [
       'draconias-persistence',     // Never quit (Dragon's fire)
-      'lyssandrias-foundations',   // Systematic completion (Stone)
-      'lyrias-precision',          // Surgical completion (Vision)
-      'aiyamis-wisdom',            // Strategic completion (Crown)
-      'elemental-reinforcement'    // Spirit-powered continuation
+      'lyssandrias-foundations',   // Systematic completion
+      'lyrias-precision',          // Surgical completion
+      'aiyamis-wisdom'             // Strategic completion
     ],
     guardianMotivation: arcaneaFeatures?.godbeast
       ? `Channel the relentless spirit of ${arcaneaFeatures.godbeast}`
@@ -245,71 +206,68 @@ function createArcaneaTodoSystem(arcaneaFeatures?: ArcaneaGuardianConfig) {
 function createRalphLooper() {
   return {
     type: 'ralph-loop-arcanea',
-    refinementMethod: 'mythological-refinement',
+    refinementMethod: 'guardian-review',
     loopStrategies: [
-      'guardian-review',      // Each Guardian reviews their domain
-      'elemental-balance',    // Check elemental harmony
-      'frequency-tuning',     // Optimize with sacred frequencies
-      'wisdom-integration'    // Apply Lumina/Nero principles
+      'guardian-review',
+      'frequency-tuning',
+      'wisdom-integration'
     ]
   };
 }
 
 /**
- * Parallel Elemental Executor
+ * Parallel Executor with Guardian coordination
  */
-function createParallelElementalExecutor(maxConcurrency: number, arcaneaFeatures?: ArcaneaGuardianConfig) {
+function createParallelExecutor(maxConcurrency: number, arcaneaFeatures?: ArcaneaGuardianConfig) {
   return {
-    type: 'parallel-elemental-executor',
+    type: 'parallel-executor',
     maxConcurrency,
-    elementalAlignment: arcaneaFeatures?.element || 'balanced',
+    guardianAlignment: arcaneaFeatures?.gate || 'balanced',
     executionMode: 'starlight-parallel'
   };
 }
 
 /**
- * Execute task with appropriate Elemental Spirit
+ * Execute task with Guardian blessing
  */
-async function executeWithElementalSpirit(task: any) {
-  // Task analysis to determine best elemental spirit
+async function executeWithGuardianBlessing(task: any) {
   const taskType = analyzeTaskType(task);
-  const spirit = selectElementalSpirit(taskType);
+  const guardian = selectGuardianForTask(taskType);
 
-  console.log(`🌟 Executing with ${spirit.name} (${taskType} domain)`);
+  console.log(`🌟 Executing with Guardian ${guardian.name} (${taskType} domain)`);
 
   try {
-    return await spirit.execute(task);
+    return await guardian.execute(task);
   } catch (error) {
-    console.error(`⚡ ${spirit.name} failed, trying backup spirit...`);
-    const backupSpirit = selectBackupSpirit(taskType);
-    return await backupSpirit.execute(task);
+    console.error(`⚡ Guardian ${guardian.name} encountered obstacle, adapting...`);
+    return await retryWithPersistence(task, guardian);
   }
 }
 
 function analyzeTaskType(task: any): string {
-  // Analyze task requirements to match elemental domain
   const content = JSON.stringify(task).toLowerCase();
 
-  if (content.includes('security') || content.includes('test')) return 'earth';
-  if (content.includes('design') || content.includes('ui')) return 'wind';
+  if (content.includes('security') || content.includes('test')) return 'foundation';
+  if (content.includes('design') || content.includes('ui')) return 'sight';
   if (content.includes('performance') || content.includes('refactor')) return 'fire';
-  if (content.includes('research') || content.includes('content')) return 'water';
-  return 'void'; // Default for complex/debugging tasks
+  if (content.includes('research') || content.includes('content')) return 'flow';
+  if (content.includes('architecture') || content.includes('system')) return 'crown';
+  return 'foundation'; // Default to Lyssandria
 }
 
-function selectElementalSpirit(taskType: string) {
-  const spirits = {
-    earth: { name: 'Stone Elemental', execute: (t: any) => Promise.resolve(t) },
-    water: { name: 'Flow Spirit', execute: (t: any) => Promise.resolve(t) },
-    fire: { name: 'Flame Elemental', execute: (t: any) => Promise.resolve(t) },
-    wind: { name: 'Air Dancer', execute: (t: any) => Promise.resolve(t) },
-    void: { name: 'Shadow Walker', execute: (t: any) => Promise.resolve(t) }
+function selectGuardianForTask(taskType: string) {
+  const guardians: Record<string, { name: string; execute: (t: any) => Promise<any> }> = {
+    foundation: { name: 'Lyssandria', execute: (t: any) => Promise.resolve(t) },
+    flow: { name: 'Leyla', execute: (t: any) => Promise.resolve(t) },
+    fire: { name: 'Draconia', execute: (t: any) => Promise.resolve(t) },
+    sight: { name: 'Lyria', execute: (t: any) => Promise.resolve(t) },
+    crown: { name: 'Aiyami', execute: (t: any) => Promise.resolve(t) }
   };
 
-  return spirits[taskType as keyof typeof spirits] || spirits.void;
+  return guardians[taskType] || guardians.foundation;
 }
 
-function selectBackupSpirit(taskType: string) {
-  // Always have Void spirits as backup for complex tasks
-  return { name: 'Shadow Walker Backup', execute: (t: any) => Promise.resolve(t) };
+async function retryWithPersistence(task: any, guardian: { name: string; execute: (t: any) => Promise<any> }) {
+  // Draconia's persistence - never give up
+  return guardian.execute(task);
 }

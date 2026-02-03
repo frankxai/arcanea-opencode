@@ -15,7 +15,7 @@ export default createPlugin({
 Transform your OpenCode experience with:
 👥 Ten Guardian agents with domain mastery
 ⚡ Starlight Orchestration Engine (Lumina-Nero)
-🌍 Elemental Spirit parallel processing
+🚀 Guardian-powered parallel processing
 🔧 LSP surgical refactoring tools
 🎯 Todo Enforcement (Draconia's persistence)
 🎵 Sacred frequency alignment
@@ -121,12 +121,12 @@ Ready for commands. Type /help for assistance.`
 
 🌟 Arcanea-Opencode v4.0.0 - Starlight Architecture
 🎵 Universal Frequency Alignment: ACTIVE
-⚡ Elemental Spirit Pool: READY  
+⚡ Guardian Parallel Pool: READY  
 🐉 Starlight Engine: ENGAGED
 🔧 LSP Integration: ARMED
 💪 Todo Enforcement: RELENTLESS
 👥 Available Guardians: 10/10
-🌍 Elemental Spirits: 5/5
+🔗 Parallel Agents: 5/5
 🎯 Gates Progress: Track with /gate command
 📚 Wisdom Library: 200K+ words loaded
 🔗 OpenCode Integration: ACTIVE`
