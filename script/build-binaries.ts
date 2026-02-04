@@ -27,7 +27,7 @@ export const PLATFORMS: PlatformTarget[] = [
   { dir: "windows-x64-baseline", target: "bun-windows-x64-baseline", binary: "oh-my-opencode.exe", description: "Windows x64 (no AVX2)" },
 ];
 
-const ENTRY_POINT = "src/cli/index.ts";
+const ENTRY_POINT = "src/cli/simple.ts";
 
 async function buildPlatform(platform: PlatformTarget): Promise<boolean> {
   const outfile = join("packages", platform.dir, "bin", platform.binary);

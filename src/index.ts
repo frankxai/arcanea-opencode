@@ -1,12 +1,25 @@
-import type { Plugin, HookContext } from "@opencode-ai/plugin";
+import type { Plugin, PluginInput } from "@opencode-ai/plugin";
 
 /**
  * Arcanea-Opencode Plugin for OpenCode
- * 
+ *
  * Simple integration focused on Guardian agents and core features
  */
 
-export default createPlugin({
+const plugin: Plugin = async (input: PluginInput) => {
+  return {
+    // Tools can be added here if needed
+    tool: {},
+
+    // Event hooks can be added here
+    // For now, returning a minimal Hooks object
+  };
+};
+
+export default plugin;
+
+// Legacy export structure (not actually used by OpenCode plugin system)
+export const arcaneaConfig = {
   name: "@arcanea/opencode",
   version: "4.0.0",
   
@@ -197,7 +210,7 @@ aiyami: Architecture, AI Systems, Enlightenment (Crown Gate)
 Execute with wisdom, precision, and relentless determination.`
     }
   }
-});
+};
 
 /**
  * Get Guardian enhancement data
@@ -265,8 +278,9 @@ function getGuardianEnhancement(guardianName: string) {
       godbeast: "Amaterasu"
     }
   };
-  
-  return guardians[guardianName.toLowerCase()] || {
+
+  const guardianKey = guardianName.toLowerCase() as keyof typeof guardians;
+  return guardians[guardianKey] || {
     domain: "Unknown domain",
     frequency: "Unknown frequency",
     element: "Unknown element",

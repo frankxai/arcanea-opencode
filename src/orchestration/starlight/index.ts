@@ -32,6 +32,7 @@ export type SisyphusOrchestratorConfig = StarlightOrchestratorConfig;
 export interface ArcaneaGuardianConfig {
   gate: string;
   frequency: string;
+  element: string;
   godbeast: string;
   specialties: string[];
 }
