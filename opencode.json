@@ -1,0 +1,45 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/minimax-m2.5-free",
+
+  "theme": "opencode",
+
+  "instructions": [
+    "../OPENCODE_INSTRUCTIONS.md",
+    "../.arcanea/lore/CANON_LOCKED.md"
+  ],
+
+  "agent": {
+    "build": {
+      "description": "Starlight Build Agent - Full Guardian intelligence",
+      "model": "opencode/big-pickle"
+    },
+    "plan": {
+      "description": "Starlight Plan Agent - Lyria's Sight (read-only)",
+      "model": "opencode/big-pickle"
+    },
+    "swarm": {
+      "description": "Full Starlight Swarm - All 10 Guardians for maximum parallel execution",
+      "model": "opencode/big-pickle",
+      "prompt": "STARLIGHT SWARM ACTIVATED. Decompose across Gates: Foundation > Flow > Fire > Heart > Voice > Sight > Crown > Shift > Unity > Source. Execute in parallel. Report Guardian assignments.",
+      "tools": { "write": true, "bash": true }
+    }
+  },
+
+  "default_agent": "build",
+
+  "permission": {
+    "edit": "auto",
+    "bash": "auto"
+  },
+
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 15000
+  },
+
+  "share": "manual"
+}

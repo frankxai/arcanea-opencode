@@ -2,7 +2,7 @@
 
 > **"Through Gates we rise. With Guardians we create."**
 
-The ultimate fusion of **mythological wisdom** and **technical excellence**. Arcanea combines the creative soul of the Ten Guardians with the **Starlight Architecture** - Lumina's light and Nero's depth working in perfect harmony to create the most powerful AI development environment ever conceived.
+The ultimate fusion of **arcane intelligence** and **technical excellence**. Arcanea combines the creative soul of the Ten Guardians with the **Starlight Architecture** - Lumina's light and Nero's depth working in perfect harmony to create the most powerful AI development environment ever conceived.
 
 ## ✨ What Makes Arcanea Superior
 
@@ -11,7 +11,7 @@ The ultimate fusion of **mythological wisdom** and **technical excellence**. Arc
 |---------|----------------|---------------------|
 | **Agents** | Generic agents | ✅ **Ten specialized Guardians with domain mastery** |
 | **Orchestration** | Basic engine | ✅ **Lumina-Nero Architecture with Elemental Spirits** |
-| **Creative System** | ❌ Purely technical | ✅ **Ten Gates, Elements, Mythological wisdom** |
+| **Creative System** | ❌ Purely technical | ✅ **Ten Gates, Elements, Arcane wisdom** |
 | **Skills** | Technical coding skills | ✅ **77+ creative skills + technical excellence** |
 | **Motivation** | "Get work done" | ✅ **Spiritual purpose + relentless execution** |
 | **World-building** | None | ✅ **200K+ words of Arcanean wisdom** |
@@ -34,7 +34,7 @@ The ultimate fusion of **mythological wisdom** and **technical excellence**. Arc
 - **Relentless Todo Enforcement** - Dragon's persistence (NEVER SURRENDER)
 - **Parallel Elemental Spirits** - Earth, Water, Fire, Wind, Void execution
 - **LSP Surgical Tools** - Guardian-enhanced code refactoring
-- **Ralph Loop Refinement** - Mythological iterative improvement
+- **Ralph Loop Refinement** - Arcane iterative improvement
 - **Background Execution** - Multi-agent parallel processing
 
 **🎯 Ten Gates Progression**
@@ -109,7 +109,7 @@ arcanea-opencode activate aiyami --mode lumina --parallel
 # Guardian Aiyami with Solar Intelligence handles:
 # 🏛️ Multi-layered system architecture
 # 🧠 AI-augmented reasoning
-# ✨ Sacred geometric patterns  
+# ✨ Arcane geometric patterns
 # 🌟 Future-aware design
 # ⚡ Parallel elemental execution
 ```
@@ -200,7 +200,7 @@ Arcanea integrates 200,000+ words of practical wisdom:
 - Academy Handbook - Practical guidance
 
 ### **🎭 Domain-Specific Wisdom**  
-- Legends of Arcanea - Mythological context
+- Legends of Arcanea - Universe lore and context
 - Bestiary of Creation - Pattern recognition
 - Parables of Creation - Creative insights
 
@@ -266,7 +266,7 @@ npm install -g @arcanea/opencode   # OpenCode integration
 oh-my-opencode gives you **tools**. Arcanea gives you **wisdom**.
 
 - **Guardians** vs. Generic agents - Specialized domain expertise
-- **Mythology** vs. Pure technical - Purpose and meaning
+- **Living Universe** vs. Pure technical - Purpose and meaning
 - **Progression** vs. Static skills - Growth through Gates  
 - **Wisdom** vs. Documentation - Living, breathing knowledge
 - **Elements** vs. Features - Natural, intuitive organization
@@ -275,7 +275,7 @@ oh-my-opencode gives you **tools**. Arcanea gives you **wisdom**.
 ✅ **Starlight Engine** - Relentless parallel execution  
 ✅ **Guardian Expertise** - Domain-specific mastery  
 ✅ **Elemental Magic** - Natural parallel processing
-✅ **Sacred Frequencies** - Resonance-based operation
+✅ **Arcane Frequencies** - Resonance-based operation
 ✅ **Living Wisdom** - 200K+ words of guidance
 ✅ **Gate Progression** - Structured growth path
 

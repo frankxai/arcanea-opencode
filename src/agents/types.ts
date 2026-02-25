@@ -1,25 +1,37 @@
-import type { AgentConfig } from "@opencode-ai/sdk"
+import type { AgentConfig } from "@opencode-ai/sdk";
 
-export type AgentFactory = (model: string) => AgentConfig
+/**
+ * Agent mode - how the agent can be used
+ * - "primary": Entry-point orchestrator
+ * - "subagent": Called by other agents
+ * - "all": Both contexts
+ */
+export type AgentMode = "primary" | "subagent" | "all";
+
+export type AgentFactory = (model: string) => AgentConfig;
 
 /**
  * Agent category for grouping in Sisyphus prompt sections
  */
-export type AgentCategory = "exploration" | "specialist" | "advisor" | "utility"
+export type AgentCategory =
+  | "exploration"
+  | "specialist"
+  | "advisor"
+  | "utility";
 
 /**
  * Cost classification for Tool Selection table
  */
-export type AgentCost = "FREE" | "CHEAP" | "EXPENSIVE"
+export type AgentCost = "FREE" | "CHEAP" | "EXPENSIVE";
 
 /**
  * Delegation trigger for Sisyphus prompt's Delegation Table
  */
 export interface DelegationTrigger {
   /** Domain of work (e.g., "Frontend UI/UX") */
-  domain: string
+  domain: string;
   /** When to delegate (e.g., "Visual changes only...") */
-  trigger: string
+  trigger: string;
 }
 
 /**
@@ -28,53 +40,54 @@ export interface DelegationTrigger {
  */
 export interface AgentPromptMetadata {
   /** Category for grouping in prompt sections */
-  category: AgentCategory
+  category: AgentCategory;
 
   /** Cost classification for Tool Selection table */
-  cost: AgentCost
+  cost: AgentCost;
 
   /** Domain triggers for Delegation Table */
-  triggers: DelegationTrigger[]
+  triggers: DelegationTrigger[];
 
   /** When to use this agent (for detailed sections) */
-  useWhen?: string[]
+  useWhen?: string[];
 
   /** When NOT to use this agent */
-  avoidWhen?: string[]
+  avoidWhen?: string[];
 
   /** Optional dedicated prompt section (markdown) - for agents like Oracle that have special sections */
-  dedicatedSection?: string
+  dedicatedSection?: string;
 
   /** Nickname/alias used in prompt (e.g., "Oracle" instead of "oracle") */
-  promptAlias?: string
+  promptAlias?: string;
 
   /** Key triggers that should appear in Phase 0 (e.g., "External library mentioned → fire librarian") */
-  keyTrigger?: string
+  keyTrigger?: string;
 }
 
 export function isGptModel(model: string): boolean {
-  return model.startsWith("openai/") || model.startsWith("github-copilot/gpt-")
+  return model.startsWith("openai/") || model.startsWith("github-copilot/gpt-");
 }
 
 export type BuiltinAgentName =
   | "sisyphus"
+  | "hephaestus"
   | "oracle"
   | "librarian"
   | "explore"
   | "multimodal-looker"
   | "metis"
   | "momus"
-  | "atlas"
+  | "atlas";
 
-export type OverridableAgentName =
-  | "build"
-  | BuiltinAgentName
+export type OverridableAgentName = "build" | BuiltinAgentName;
 
-export type AgentName = BuiltinAgentName
+export type AgentName = BuiltinAgentName;
 
 export type AgentOverrideConfig = Partial<AgentConfig> & {
-  prompt_append?: string
-  variant?: string
-}
+  prompt_append?: string;
+  variant?: string;
+};
 
-export type AgentOverrides = Partial<Record<OverridableAgentName, AgentOverrideConfig>>
+export type AgentOverrides = Partial<
+  Record<OverridableAgentName, AgentOverrideConfig>
+>;
