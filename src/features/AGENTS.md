@@ -1,66 +1,70 @@
-# FEATURES KNOWLEDGE BASE
+# src/features/ — 19 Feature Modules
+
+**Generated:** 2026-03-06
 
 ## OVERVIEW
 
-Claude Code compatibility layer + core feature modules. Commands, skills, agents, MCPs, hooks from Claude Code work seamlessly.
+Standalone feature modules wired into plugin/ layer. Each is self-contained with own types, implementation, and tests.
 
-## STRUCTURE
+## MODULE MAP
 
-```
-features/
-├── background-agent/           # Task lifecycle, notifications (460 lines)
-├── builtin-commands/           # Built-in slash commands
-├── builtin-skills/             # Built-in skills (playwright)
-├── claude-code-agent-loader/   # ~/.claude/agents/*.md
-├── claude-code-command-loader/ # ~/.claude/commands/*.md
-├── claude-code-mcp-loader/     # .mcp.json files
-│   └── env-expander.ts         # ${VAR} expansion
-├── claude-code-plugin-loader/  # installed_plugins.json (484 lines)
-├── claude-code-session-state/  # Session state persistence
-├── opencode-skill-loader/      # Skills from OpenCode + Claude paths
-├── skill-mcp-manager/          # MCP servers in skill YAML
-└── hook-message-injector/      # Inject messages into conversation
-```
+| Module | Files | Complexity | Purpose |
+|--------|-------|------------|---------|
+| **opencode-skill-loader** | 33 | HIGH | YAML frontmatter skill loading from 4 scopes |
+| **background-agent** | 31 | HIGH | Task lifecycle, concurrency (5/model), polling, spawner pattern |
+| **tmux-subagent** | 30 | HIGH | Tmux pane management, grid planning, session orchestration |
+| **mcp-oauth** | 18 | HIGH | OAuth 2.0 + PKCE + DCR (RFC 7591) for MCP servers |
+| **builtin-skills** | 17 | LOW | 6 skills: git-master, playwright, playwright-cli, agent-browser, dev-browser, frontend-ui-ux |
+| **skill-mcp-manager** | 12 | MEDIUM | MCP client lifecycle per session (stdio + HTTP) |
+| **claude-code-plugin-loader** | 10 | MEDIUM | Unified plugin discovery from .opencode/plugins/ |
+| **builtin-commands** | 11 | LOW | Command templates: refactor, init-deep, handoff, etc. |
+| **claude-tasks** | 7 | MEDIUM | Task schema + file storage + OpenCode todo sync |
+| **claude-code-mcp-loader** | 6 | MEDIUM | .mcp.json loading with ${VAR} env expansion |
+| **context-injector** | 6 | MEDIUM | AGENTS.md/README.md injection into context |
+| **run-continuation-state** | 5 | LOW | Persistent state for `run` command continuation across sessions |
+| **hook-message-injector** | 5 | MEDIUM | System message injection for hooks |
+| **boulder-state** | 5 | LOW | Persistent state for multi-step operations |
+| **task-toast-manager** | 4 | MEDIUM | Task progress notifications |
+| **tool-metadata-store** | 3 | LOW | Tool execution metadata cache |
+| **claude-code-session-state** | 3 | LOW | Subagent session state tracking |
+| **claude-code-command-loader** | 3 | LOW | Load commands from .opencode/commands/ |
+| **claude-code-agent-loader** | 3 | LOW | Load agents from .opencode/agents/ |
 
-## LOADER PRIORITY
+## KEY MODULES
 
-| Loader | Priority (highest first) |
-|--------|--------------------------|
-| Commands | `.opencode/command/` > `~/.config/opencode/command/` > `.claude/commands/` > `~/.claude/commands/` |
-| Skills | `.opencode/skill/` > `~/.config/opencode/skill/` > `.claude/skills/` > `~/.claude/skills/` |
-| Agents | `.claude/agents/` > `~/.claude/agents/` |
-| MCPs | `.claude/.mcp.json` > `.mcp.json` > `~/.claude/.mcp.json` |
+### background-agent (31 files, ~10k LOC)
 
-## CONFIG TOGGLES
+Core orchestration engine. `BackgroundManager` manages task lifecycle:
+- States: pending → running → completed/error/cancelled/interrupt
+- Concurrency: per-model/provider limits via `ConcurrencyManager` (FIFO queue)
+- Polling: 3s interval, completion via idle events + stability detection (10s unchanged)
+- spawner/: 8 focused files composing via `SpawnerContext` interface
 
-```json
-{
-  "claude_code": {
-    "mcp": false,      // Skip .mcp.json
-    "commands": false, // Skip commands/*.md
-    "skills": false,   // Skip skills/*/SKILL.md
-    "agents": false,   // Skip agents/*.md
-    "hooks": false     // Skip settings.json hooks
-  }
-}
-```
+### opencode-skill-loader (33 files, ~3.2k LOC)
 
-## BACKGROUND AGENT
+4-scope skill discovery (project > opencode > user > global):
+- YAML frontmatter parsing from SKILL.md files
+- Skill merger with priority deduplication
+- Template resolution with variable substitution
+- Provider gating for model-specific skills
 
-- Lifecycle: pending → running → completed/failed
-- OS notification on complete
-- `background_output` to retrieve results
-- `background_cancel` with task_id or all=true
+### tmux-subagent (30 files, ~3.6k LOC)
 
-## SKILL MCP
+State-first tmux integration:
+- `TmuxSessionManager`: pane lifecycle, grid planning
+- Spawn action decider + target finder
+- Polling manager for session health
+- Event handlers for pane creation/destruction
 
-- MCP servers embedded in skill YAML frontmatter
-- Lazy client loading, session-scoped cleanup
-- `skill_mcp` tool exposes capabilities
+### builtin-skills (6 skill objects)
 
-## ANTI-PATTERNS
+| Skill | Size | MCP | Tools |
+|-------|------|-----|-------|
+| git-master | 1111 LOC | — | Bash |
+| playwright | 312 LOC | @playwright/mcp | — |
+| agent-browser | (in playwright.ts) | — | Bash(agent-browser:*) |
+| playwright-cli | 268 LOC | — | Bash(playwright-cli:*) |
+| dev-browser | 221 LOC | — | Bash |
+| frontend-ui-ux | 79 LOC | — | — |
 
-- Blocking on load (loaders run at startup)
-- No error handling (always try/catch)
-- Ignoring priority order
-- Writing to ~/.claude/ (read-only)
+Browser variant selected by `browserProvider` config: playwright (default) | playwright-cli | agent-browser.

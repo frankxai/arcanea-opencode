@@ -1,83 +1,108 @@
-# TOOLS KNOWLEDGE BASE
+# src/tools/ — 26 Tools Across 15 Directories
+
+**Generated:** 2026-03-06
 
 ## OVERVIEW
 
-Custom tools extending agent capabilities: LSP integration (11 tools), AST-aware code search/replace, file operations with timeouts, background task management.
+26 tools registered via `createToolRegistry()`. Two patterns: factory functions (`createXXXTool`) for 19 tools, direct `ToolDefinition` for 7 (LSP + interactive_bash).
 
-## STRUCTURE
+## TOOL CATALOG
 
-```
-tools/
-├── ast-grep/           # AST-aware code search/replace (25 languages)
-│   ├── cli.ts          # @ast-grep/cli subprocess
-│   ├── napi.ts         # @ast-grep/napi native binding (preferred)
-│   ├── constants.ts, types.ts, tools.ts, utils.ts
-├── background-task/    # Async agent task management
-├── call-omo-agent/     # Spawn explore/librarian agents
-├── glob/               # File pattern matching (timeout-safe)
-├── grep/               # Content search (timeout-safe)
-├── interactive-bash/   # Tmux session management
-├── look-at/            # Multimodal analysis (PDF, images)
-├── lsp/                # 11 LSP tools
-│   ├── client.ts       # LSP connection lifecycle
-│   ├── config.ts       # Server configurations
-│   ├── tools.ts        # Tool implementations
-│   └── types.ts
-├── session-manager/    # OpenCode session file management
-│   ├── constants.ts    # Storage paths, descriptions
-│   ├── types.ts        # Session data interfaces
-│   ├── storage.ts      # File I/O operations
-│   ├── utils.ts        # Formatting, filtering
-│   └── tools.ts        # Tool implementations
-├── skill/              # Skill loading and execution
-├── skill-mcp/          # Skill-embedded MCP invocation
-├── slashcommand/       # Slash command execution
-└── index.ts            # builtinTools export
-```
+### Task Management (4)
 
-## TOOL CATEGORIES
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `task_create` | `createTaskCreateTool` | subject, description, blockedBy, blocks, metadata, parentID |
+| `task_list` | `createTaskList` | (none) |
+| `task_get` | `createTaskGetTool` | id |
+| `task_update` | `createTaskUpdateTool` | id, subject, description, status, addBlocks, addBlockedBy, owner, metadata |
 
-| Category | Tools | Purpose |
-|----------|-------|---------|
-| LSP | lsp_hover, lsp_goto_definition, lsp_find_references, lsp_document_symbols, lsp_workspace_symbols, lsp_diagnostics, lsp_servers, lsp_prepare_rename, lsp_rename, lsp_code_actions, lsp_code_action_resolve | IDE-like code intelligence |
-| AST | ast_grep_search, ast_grep_replace | Pattern-based code search/replace |
-| File Search | grep, glob | Content and file pattern matching |
-| Session | session_list, session_read, session_search, session_info | OpenCode session file management |
-| Background | sisyphus_task, background_output, background_cancel | Async agent orchestration |
-| Multimodal | look_at | PDF/image analysis via Gemini |
-| Terminal | interactive_bash | Tmux session control |
-| Commands | slashcommand | Execute slash commands |
-| Skills | skill, skill_mcp | Load skills, invoke skill-embedded MCPs |
-| Agents | call_omo_agent | Spawn explore/librarian |
+### Delegation (1)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `task` | `createDelegateTask` | description, prompt, category, subagent_type, run_in_background, session_id, load_skills, command |
+
+**8 Built-in Categories**: visual-engineering, ultrabrain, deep, artistry, quick, unspecified-low, unspecified-high, writing
+
+### Agent Invocation (1)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `call_omo_agent` | `createCallOmoAgent` | description, prompt, subagent_type, run_in_background, session_id |
+
+### Background Tasks (2)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `background_output` | `createBackgroundOutput` | task_id, block, timeout, full_session, include_thinking, message_limit, since_message_id, thinking_max_chars |
+| `background_cancel` | `createBackgroundCancel` | taskId, all |
+
+### LSP Refactoring (6) — Direct ToolDefinition
+
+| Tool | Parameters |
+|------|------------|
+| `lsp_goto_definition` | filePath, line, character |
+| `lsp_find_references` | filePath, line, character, includeDeclaration |
+| `lsp_symbols` | filePath, scope (document/workspace), query, limit |
+| `lsp_diagnostics` | filePath, severity |
+| `lsp_prepare_rename` | filePath, line, character |
+| `lsp_rename` | filePath, line, character, newName |
+
+### Code Search (4)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `ast_grep_search` | `createAstGrepTools` | pattern, lang, paths, globs, context |
+| `ast_grep_replace` | `createAstGrepTools` | pattern, rewrite, lang, paths, globs, dryRun |
+| `grep` | `createGrepTools` | pattern, path, include (60s timeout, 10MB limit) |
+| `glob` | `createGlobTools` | pattern, path (60s timeout, 100 file limit) |
+
+### Session History (4)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `session_list` | `createSessionManagerTools` | (none) |
+| `session_read` | `createSessionManagerTools` | session_id, include_todos, limit |
+| `session_search` | `createSessionManagerTools` | query, session_id, case_sensitive, limit |
+| `session_info` | `createSessionManagerTools` | session_id |
+
+### Skill/Command (2)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `skill` | `createSkillTool` | name, user_message |
+| `skill_mcp` | `createSkillMcpTool` | mcp_name, tool_name/resource_name/prompt_name, arguments, grep |
+
+### System (2)
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `interactive_bash` | Direct | tmux_command |
+| `look_at` | `createLookAt` | file_path, image_data, goal |
+
+### Editing (1) — Conditional
+
+| Tool | Factory | Parameters |
+|------|---------|------------|
+| `hashline_edit` | `createHashlineEditTool` | file, edits[] |
+
+## DELEGATION CATEGORIES
+
+| Category | Model | Domain |
+|----------|-------|--------|
+| visual-engineering | gemini-3.1-pro high | Frontend, UI/UX |
+| ultrabrain | gpt-5.4 xhigh | Hard logic |
+| deep | gpt-5.3-codex medium | Autonomous problem-solving |
+| artistry | gemini-3.1-pro high | Creative approaches |
+| quick | gpt-5.4-mini | Trivial tasks |
+| unspecified-low | claude-sonnet-4-6 | Moderate effort |
+| unspecified-high | claude-opus-4-6 max | High effort |
+| writing | kimi-k2p5 | Documentation |
 
 ## HOW TO ADD A TOOL
 
-1. Create directory: `src/tools/my-tool/`
-2. Create files:
-   - `constants.ts`: `TOOL_NAME`, `TOOL_DESCRIPTION`
-   - `types.ts`: Parameter/result interfaces
-   - `tools.ts`: Tool implementation (returns OpenCode tool object)
-   - `index.ts`: Barrel export
-   - `utils.ts`: Helpers (optional)
-3. Add to `builtinTools` in `src/tools/index.ts`
-
-## LSP SPECIFICS
-
-- **Client lifecycle**: Lazy init on first use, auto-shutdown on idle
-- **Config priority**: opencode.json > oh-my-opencode.json > defaults
-- **Supported servers**: typescript-language-server, pylsp, gopls, rust-analyzer, etc.
-- **Custom servers**: Add via `lsp` config in oh-my-opencode.json
-
-## AST-GREP SPECIFICS
-
-- **Meta-variables**: `$VAR` (single node), `$$$` (multiple nodes)
-- **Languages**: 25 supported (typescript, tsx, python, rust, go, etc.)
-- **Binding**: Prefers @ast-grep/napi (native), falls back to @ast-grep/cli
-- **Pattern must be valid AST**: `export async function $NAME($$$) { $$$ }` not fragments
-
-## ANTI-PATTERNS (TOOLS)
-
-- **No timeout**: Always use timeout for file operations (default 60s)
-- **Blocking main thread**: Use async/await, never sync file ops
-- **Ignoring LSP errors**: Gracefully handle server not found/crashed
-- **Raw subprocess for ast-grep**: Prefer napi binding for performance
+1. Create `src/tools/{name}/index.ts` exporting factory
+2. Create `src/tools/{name}/types.ts` for parameter schemas
+3. Create `src/tools/{name}/tools.ts` for implementation
+4. Register in `src/plugin/tool-registry.ts`

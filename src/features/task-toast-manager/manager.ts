@@ -1,8 +1,14 @@
 import type { PluginInput } from "@opencode-ai/plugin"
-import type { TrackedTask, TaskStatus } from "./types"
+import type { TrackedTask, TaskStatus, ModelFallbackInfo } from "./types"
 import type { ConcurrencyManager } from "../background-agent/concurrency"
 
 type OpencodeClient = PluginInput["client"]
+
+type ClientWithTui = {
+  tui?: {
+    showToast: (opts: { body: { title: string; message: string; variant: string; duration: number } }) => Promise<unknown>
+  }
+}
 
 export class TaskToastManager {
   private tasks: Map<string, TrackedTask> = new Map()
@@ -20,20 +26,26 @@ export class TaskToastManager {
 
   addTask(task: {
     id: string
+    sessionID?: string
     description: string
     agent: string
     isBackground: boolean
     status?: TaskStatus
+    category?: string
     skills?: string[]
+    modelInfo?: ModelFallbackInfo
   }): void {
     const trackedTask: TrackedTask = {
       id: task.id,
+      sessionID: task.sessionID,
       description: task.description,
       agent: task.agent,
       status: task.status ?? "running",
       startedAt: new Date(),
       isBackground: task.isBackground,
+      category: task.category,
       skills: task.skills,
+      modelInfo: task.modelInfo,
     }
 
     this.tasks.set(task.id, trackedTask)
@@ -48,6 +60,18 @@ export class TaskToastManager {
     if (task) {
       task.status = status
     }
+  }
+
+  /**
+   * Update model info for a task by session ID
+   */
+  updateTaskModelBySession(sessionID: string, modelInfo: ModelFallbackInfo): void {
+    if (!sessionID) return
+    const task = Array.from(this.tasks.values()).find((t) => t.sessionID === sessionID)
+    if (!task) return
+    if (task.modelInfo?.model === modelInfo.model && task.modelInfo?.type === modelInfo.type) return
+    task.modelInfo = modelInfo
+    this.showTaskListToast(task)
   }
 
   /**
@@ -103,16 +127,40 @@ export class TaskToastManager {
     const queued = this.getQueuedTasks()
     const concurrencyInfo = this.getConcurrencyInfo()
 
+    const formatTaskIdentifier = (task: TrackedTask): string => {
+      const modelName = task.modelInfo?.model?.split("/").pop()
+      if (modelName && task.category) return `${modelName}: ${task.category}`
+      if (modelName) return modelName
+      if (task.category) return `${task.agent}/${task.category}`
+      return task.agent
+    }
     const lines: string[] = []
+
+    const isFallback = newTask.modelInfo && (
+      newTask.modelInfo.type === "inherited" ||
+      newTask.modelInfo.type === "system-default" ||
+      newTask.modelInfo.type === "runtime-fallback"
+    )
+    if (isFallback) {
+      const suffixMap: Record<"inherited" | "system-default" | "runtime-fallback", string> = {
+        inherited: " (inherited from parent)",
+        "system-default": " (system default fallback)",
+        "runtime-fallback": " (runtime fallback)",
+      }
+      const suffix = suffixMap[newTask.modelInfo!.type as "inherited" | "system-default" | "runtime-fallback"]
+      lines.push(`[FALLBACK] Model: ${newTask.modelInfo!.model}${suffix}`)
+      lines.push("")
+    }
 
     if (running.length > 0) {
       lines.push(`Running (${running.length}):${concurrencyInfo}`)
       for (const task of running) {
         const duration = this.formatDuration(task.startedAt)
-        const bgIcon = task.isBackground ? "⚡" : "🔄"
+        const bgIcon = task.isBackground ? "[BG]" : "[RUN]"
         const isNew = task.id === newTask.id ? " ← NEW" : ""
+        const taskId = formatTaskIdentifier(task)
         const skillsInfo = task.skills?.length ? ` [${task.skills.join(", ")}]` : ""
-        lines.push(`${bgIcon} ${task.description} (${task.agent})${skillsInfo} - ${duration}${isNew}`)
+        lines.push(`${bgIcon} ${task.description} (${taskId})${skillsInfo} - ${duration}${isNew}`)
       }
     }
 
@@ -120,9 +168,11 @@ export class TaskToastManager {
       if (lines.length > 0) lines.push("")
       lines.push(`Queued (${queued.length}):`)
       for (const task of queued) {
-        const bgIcon = task.isBackground ? "⏳" : "⏸️"
+        const bgIcon = task.isBackground ? "[Q]" : "[W]"
+        const taskId = formatTaskIdentifier(task)
         const skillsInfo = task.skills?.length ? ` [${task.skills.join(", ")}]` : ""
-        lines.push(`${bgIcon} ${task.description} (${task.agent})${skillsInfo}`)
+        const isNew = task.id === newTask.id ? " ← NEW" : ""
+        lines.push(`${bgIcon} ${task.description} (${taskId})${skillsInfo} - Queued${isNew}`)
       }
     }
 
@@ -133,8 +183,7 @@ export class TaskToastManager {
    * Show consolidated toast with all running/queued tasks
    */
   private showTaskListToast(newTask: TrackedTask): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tuiClient = this.client as any
+    const tuiClient = this.client as ClientWithTui
     if (!tuiClient.tui?.showToast) return
 
     const message = this.buildTaskListMessage(newTask)
@@ -142,8 +191,8 @@ export class TaskToastManager {
     const queued = this.getQueuedTasks()
 
     const title = newTask.isBackground
-      ? `⚡ New Background Task`
-      : `🔄 New Task Executed`
+      ? `New Background Task`
+      : `New Task Executed`
 
     tuiClient.tui.showToast({
       body: {
@@ -159,8 +208,7 @@ export class TaskToastManager {
    * Show task completion toast
    */
   showCompletionToast(task: { id: string; description: string; duration: string }): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tuiClient = this.client as any
+    const tuiClient = this.client as ClientWithTui
     if (!tuiClient.tui?.showToast) return
 
     this.removeTask(task.id)
@@ -168,7 +216,7 @@ export class TaskToastManager {
     const remaining = this.getRunningTasks()
     const queued = this.getQueuedTasks()
 
-    let message = `✅ "${task.description}" finished in ${task.duration}`
+    let message = `"${task.description}" finished in ${task.duration}`
     if (remaining.length > 0 || queued.length > 0) {
       message += `\n\nStill running: ${remaining.length} | Queued: ${queued.length}`
     }
@@ -196,4 +244,8 @@ export function initTaskToastManager(
 ): TaskToastManager {
   instance = new TaskToastManager(client, concurrencyManager)
   return instance
+}
+
+export function _resetTaskToastManagerForTesting(): void {
+  instance = null
 }

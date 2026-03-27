@@ -1,6 +1,6 @@
 ---
 name: git-master
-description: "MUST USE for ANY git operations. Atomic commits, rebase/squash, history search (blame, bisect, log -S). STRONGLY RECOMMENDED: Use with sisyphus_task(category='quick', skills=['git-master'], ...) to save context. Triggers: 'commit', 'rebase', 'squash', 'who wrote', 'when was X added', 'find the commit that'."
+description: "MUST USE for ANY git operations. Atomic commits, rebase/squash, history search (blame, bisect, log -S). STRONGLY RECOMMENDED: Use with task(category='quick', load_skills=['git-master'], ...) to save context. Triggers: 'commit', 'rebase', 'squash', 'who wrote', 'when was X added', 'find the commit that'."
 ---
 
 # Git Master Agent
@@ -529,33 +529,6 @@ IF style == SHORT:
 3. Is it similar to examples from git log?
 
 If ANY check fails -> REWRITE message.
-
-### 5.5 Commit Footer & Co-Author (Configurable)
-
-**Check arcanea-opencode.json for these flags:**
-- `git_master.commit_footer` (default: true) - adds footer message
-- `git_master.include_co_authored_by` (default: true) - adds co-author trailer
-
-If enabled, add Arcanea attribution to EVERY commit:
-
-1. **Footer in commit body (if `commit_footer: true`):**
-```
-Ultraworked with [Arcanea](https://github.com/frankxai/arcanea-opencode)
-```
-
-2. **Co-authored-by trailer (if `include_co_authored_by: true`):**
-```
-Co-authored-by: Arcanea <arcanea@frankx.io>
-```
-
-**Example (both enabled):**
-```bash
-git commit -m "{Commit Message}" -m "Ultraworked with [Arcanea](https://github.com/frankxai/arcanea-opencode)" -m "Co-authored-by: Arcanea <arcanea@frankx.io>"
-```
-
-**To disable:** Set in arcanea-opencode.json:
-```json
-{ "git_master": { "commit_footer": false, "include_co_authored_by": false } }
 ```
 </execution>
 

@@ -1,63 +1,54 @@
-# SHARED UTILITIES KNOWLEDGE BASE
+# src/shared/ — 95+ Utility Files in 13 Categories
+
+**Generated:** 2026-03-06
 
 ## OVERVIEW
 
-Cross-cutting utilities: path resolution, config management, text processing, Claude Code compatibility helpers.
+Cross-cutting utilities used throughout the plugin. Barrel-exported from `index.ts`. Logger writes to `/tmp/oh-my-opencode.log`.
 
-## STRUCTURE
+## CATEGORY MAP
+
+| Category | Files | Key Exports |
+|----------|-------|-------------|
+| **Model Resolution** | 17 | `resolveModel()`, `checkModelAvailability()`, `AGENT_MODEL_REQUIREMENTS` |
+| **Tmux Integration** | 11 | `createTmuxSession()`, `spawnPane()`, `closePane()`, server health |
+| **Configuration & Paths** | 10 | `resolveOpenCodeConfigDir()`, `getDataPath()`, `parseJSONC()` |
+| **Session Management** | 8 | `SessionCursor`, `trackInjectedPath()`, `SessionToolsStore` |
+| **Git Worktree** | 7 | `parseGitStatusPorcelain()`, `collectGitDiffStats()`, `formatFileChanges()` |
+| **Command Execution** | 7 | `executeCommand()`, `executeHookCommand()`, embedded command registry |
+| **Migration** | 6 | `migrateConfigFile()`, AGENT_NAME_MAP, HOOK_NAME_MAP, MODEL_VERSION_MAP |
+| **String & Tool Utils** | 6 | `toSnakeCase()`, `normalizeToolName()`, `parseFrontmatter()` |
+| **Agent Configuration** | 5 | `getAgentVariant()`, `AGENT_DISPLAY_NAMES`, `AGENT_TOOL_RESTRICTIONS` |
+| **OpenCode Integration** | 5 | `injectServerAuth()`, `detectExternalPlugins()`, client accessors |
+| **Type Helpers** | 4 | `deepMerge()`, `DynamicTruncator`, `matchPattern()`, `isRecord()` |
+| **Misc** | 8 | `log()`, `readFile()`, `extractZip()`, `downloadBinary()`, `findAvailablePort()` |
+
+## MODEL RESOLUTION PIPELINE
 
 ```
-shared/
-├── index.ts              # Barrel export
-├── claude-config-dir.ts  # ~/.claude resolution
-├── command-executor.ts   # Shell exec with variable expansion
-├── config-errors.ts      # Global error tracking
-├── config-path.ts        # User/project config paths
-├── data-path.ts          # XDG data directory
-├── deep-merge.ts         # Type-safe recursive merge
-├── dynamic-truncator.ts  # Token-aware truncation
-├── file-reference-resolver.ts  # @filename syntax
-├── file-utils.ts         # Symlink, markdown detection
-├── frontmatter.ts        # YAML frontmatter parsing
-├── hook-disabled.ts      # Check if hook disabled
-├── jsonc-parser.ts       # JSON with Comments
-├── logger.ts             # File-based logging
-├── migration.ts          # Legacy name compat (omo → Sisyphus)
-├── model-sanitizer.ts    # Normalize model names
-├── pattern-matcher.ts    # Tool name matching
-├── snake-case.ts         # Case conversion
-└── tool-name.ts          # PascalCase normalization
+resolveModel(input)
+  1. Override: UI-selected model (primary agents only)
+  2. Category default: From category config
+  3. Provider fallback: AGENT_MODEL_REQUIREMENTS chains
+  4. System default: Ultimate fallback
 ```
 
-## WHEN TO USE
+Key files: `model-resolver.ts` (entry), `model-resolution-pipeline.ts` (orchestration), `model-requirements.ts` (fallback chains), `model-availability.ts` (fuzzy matching).
 
-| Task | Utility |
-|------|---------|
-| Find ~/.claude | `getClaudeConfigDir()` |
-| Merge configs | `deepMerge(base, override)` |
-| Parse user files | `parseJsonc()` |
-| Check hook enabled | `isHookDisabled(name, list)` |
-| Truncate output | `dynamicTruncate(text, budget)` |
-| Resolve @file | `resolveFileReferencesInText()` |
-| Execute shell | `resolveCommandsInText()` |
-| Legacy names | `migrateLegacyAgentNames()` |
+## MIGRATION SYSTEM
 
-## CRITICAL PATTERNS
+Automatically transforms legacy config on load:
+- `agent-names.ts`: Old agent names → new (e.g., `junior` → `sisyphus-junior`)
+- `hook-names.ts`: Old hook names → new
+- `model-versions.ts`: Old model IDs → current
+- `agent-category.ts`: Legacy agent configs → category system
 
-```typescript
-// Dynamic truncation
-const output = dynamicTruncate(result, remainingTokens, 0.5)
+## MOST IMPORTED
 
-// Deep merge priority
-const final = deepMerge(deepMerge(defaults, userConfig), projectConfig)
-
-// Safe JSONC
-const { config, error } = parseJsoncSafe(content)
-```
-
-## ANTI-PATTERNS
-
-- Hardcoding paths (use getClaudeConfigDir, getUserConfigPath)
-- JSON.parse for user files (use parseJsonc)
-- Ignoring truncation (large outputs MUST use dynamicTruncate)
-- Direct string concat for configs (use deepMerge)
+| Utility | Import Count | Purpose |
+|---------|-------------|---------|
+| `logger.ts` | 62 | `/tmp/oh-my-opencode.log` |
+| `data-path.ts` | 11 | XDG storage resolution |
+| `model-requirements.ts` | 11 | Agent fallback chains |
+| `system-directive.ts` | 11 | System message filtering |
+| `frontmatter.ts` | 10 | YAML metadata extraction |

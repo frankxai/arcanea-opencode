@@ -1,3 +1,4 @@
+import { resolve } from "node:path"
 import { spawn } from "bun"
 import {
   resolveGrepCli,
@@ -7,9 +8,11 @@ import {
   DEFAULT_MAX_DEPTH,
   DEFAULT_MAX_OUTPUT_BYTES,
   RG_FILES_FLAGS,
+  DEFAULT_RG_THREADS,
 } from "./constants"
 import type { GlobOptions, GlobResult, FileMatch } from "./types"
 import { stat } from "node:fs/promises"
+import { rgSemaphore } from "../shared/semaphore"
 
 export interface ResolvedCli {
   path: string
@@ -19,10 +22,12 @@ export interface ResolvedCli {
 function buildRgArgs(options: GlobOptions): string[] {
   const args: string[] = [
     ...RG_FILES_FLAGS,
+    `--threads=${Math.min(options.threads ?? DEFAULT_RG_THREADS, DEFAULT_RG_THREADS)}`,
     `--max-depth=${Math.min(options.maxDepth ?? DEFAULT_MAX_DEPTH, DEFAULT_MAX_DEPTH)}`,
   ]
 
-  if (options.hidden) args.push("--hidden")
+  if (options.hidden !== false) args.push("--hidden")
+  if (options.follow !== false) args.push("--follow")
   if (options.noIgnore) args.push("--no-ignore")
 
   args.push(`--glob=${options.pattern}`)
@@ -31,7 +36,13 @@ function buildRgArgs(options: GlobOptions): string[] {
 }
 
 function buildFindArgs(options: GlobOptions): string[] {
-  const args: string[] = ["."]
+  const args: string[] = []
+
+  if (options.follow !== false) {
+    args.push("-L")
+  }
+
+  args.push(".")
 
   const maxDepth = Math.min(options.maxDepth ?? DEFAULT_MAX_DEPTH, DEFAULT_MAX_DEPTH)
   args.push("-maxdepth", String(maxDepth))
@@ -39,7 +50,7 @@ function buildFindArgs(options: GlobOptions): string[] {
   args.push("-type", "f")
   args.push("-name", options.pattern)
 
-  if (!options.hidden) {
+  if (options.hidden === false) {
     args.push("-not", "-path", "*/.*")
   }
 
@@ -56,9 +67,14 @@ function buildPowerShellCommand(options: GlobOptions): string[] {
 
   let psCommand = `Get-ChildItem -Path '${escapedPath}' -File -Recurse -Depth ${maxDepth - 1} -Filter '${escapedPattern}'`
 
-  if (options.hidden) {
+  if (options.hidden !== false) {
     psCommand += " -Force"
   }
+
+  // NOTE: Symlink following (-FollowSymlink) is NOT supported in PowerShell backend.
+  // -FollowSymlink was introduced in PowerShell Core 6.0+ and is unavailable in
+  // Windows PowerShell 5.1 (default on Windows). OpenCode auto-downloads ripgrep
+  // which handles symlinks via --follow. This fallback rarely triggers in practice.
 
   psCommand += " -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName"
 
@@ -74,7 +90,21 @@ async function getFileMtime(filePath: string): Promise<number> {
   }
 }
 
+export { buildRgArgs, buildFindArgs, buildPowerShellCommand }
+
 export async function runRgFiles(
+  options: GlobOptions,
+  resolvedCli?: ResolvedCli
+): Promise<GlobResult> {
+  await rgSemaphore.acquire()
+  try {
+    return await runRgFilesInternal(options, resolvedCli)
+  } finally {
+    rgSemaphore.release()
+  }
+}
+
+async function runRgFilesInternal(
   options: GlobOptions,
   resolvedCli?: ResolvedCli
 ): Promise<GlobResult> {
@@ -90,10 +120,9 @@ export async function runRgFiles(
 
   if (isRg) {
     const args = buildRgArgs(options)
-    const paths = options.paths?.length ? options.paths : ["."]
-    args.push(...paths)
+    cwd = options.paths?.[0] || "."
+    args.push(".")
     command = [cli.path, ...args]
-    cwd = undefined
   } else if (isWindows) {
     command = buildPowerShellCommand(options)
     cwd = undefined
@@ -148,7 +177,7 @@ export async function runRgFiles(
 
       let filePath: string
       if (isRg) {
-        filePath = line
+        filePath = cwd ? resolve(cwd, line) : line
       } else if (isWindows) {
         filePath = line.trim()
       } else {

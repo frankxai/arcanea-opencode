@@ -1,16 +1,5 @@
 export {
   OhMyOpenCodeConfigSchema,
-  AgentOverrideConfigSchema,
-  AgentOverridesSchema,
-  McpNameSchema,
-  AgentNameSchema,
-  HookNameSchema,
-  BuiltinCommandNameSchema,
-  SisyphusAgentConfigSchema,
-  ExperimentalConfigSchema,
-  RalphLoopConfigSchema,
-  PersonaConfigSchema,
-  PersonasConfigSchema,
 } from "./schema"
 
 export type {
@@ -21,20 +10,15 @@ export type {
   AgentName,
   HookName,
   BuiltinCommandName,
-  BuiltinAgentName,
   SisyphusAgentConfig,
   ExperimentalConfig,
   DynamicContextPruningConfig,
   RalphLoopConfig,
-  PersonaConfig,
-  PersonasConfig,
+  TmuxConfig,
+  TmuxLayout,
+  SisyphusConfig,
+  SisyphusTasksConfig,
+  RuntimeFallbackConfig,
+  ModelCapabilitiesConfig,
+  FallbackModels,
 } from "./schema"
-
-export {
-  getActivePersona,
-  getPersonaDisplayName,
-  getPlannerDisplayName,
-  getBuiltinPersonas,
-} from "../shared/persona"
-
-export type { PersonaInfo } from "../shared/persona"
