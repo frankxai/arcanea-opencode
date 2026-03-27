@@ -1,91 +1,79 @@
-# AGENTS KNOWLEDGE BASE
+# src/agents/ — 11 Agent Definitions
+
+**Generated:** 2026-03-06
 
 ## OVERVIEW
 
-AI agent definitions for multi-model orchestration. 7 specialized agents: Sisyphus (orchestrator), oracle (read-only consultation), librarian (research), explore (grep), frontend-ui-ux-engineer, document-writer, multimodal-looker.
+Agent factories following `createXXXAgent(model) → AgentConfig` pattern. Each has static `mode` property. Built via `buildAgent()` compositing factory + categories + skills.
+
+## AGENT INVENTORY
+
+| Agent | Model | Temp | Mode | Fallback Chain | Purpose |
+|-------|-------|------|------|----------------|---------|
+| **Sisyphus** | claude-opus-4-6 max | 0.1 | all | k2p5 → kimi-k2.5 → gpt-5.4 medium → glm-5 → big-pickle | Main orchestrator, plans + delegates |
+| **Hephaestus** | gpt-5.4 medium | 0.1 | all | — | Autonomous deep worker |
+| **Oracle** | gpt-5.4 high | 0.1 | subagent | gemini-3.1-pro high → claude-opus-4-6 max | Read-only consultation |
+| **Librarian** | minimax-m2.7 | 0.1 | subagent | minimax-m2.7-highspeed → claude-haiku-4-5 → gpt-5-nano | External docs/code search |
+| **Explore** | grok-code-fast-1 | 0.1 | subagent | minimax-m2.7-highspeed → minimax-m2.7 → claude-haiku-4-5 → gpt-5-nano | Contextual grep |
+| **Multimodal-Looker** | gpt-5.3-codex medium | 0.1 | subagent | k2p5 → gemini-3-flash → glm-4.6v → gpt-5-nano | PDF/image analysis |
+| **Metis** | claude-opus-4-6 max | **0.3** | subagent | gpt-5.4 high → gemini-3.1-pro high | Pre-planning consultant |
+| **Momus** | gpt-5.4 xhigh | 0.1 | subagent | claude-opus-4-6 max → gemini-3.1-pro high | Plan reviewer |
+| **Atlas** | claude-sonnet-4-6 | 0.1 | primary | gpt-5.4 medium | Todo-list orchestrator |
+| **Prometheus** | claude-opus-4-6 max | 0.1 | — | gpt-5.4 high → gemini-3.1-pro | Strategic planner (internal) |
+| **Sisyphus-Junior** | claude-sonnet-4-6 | 0.1 | all | user-configurable | Category-spawned executor |
+
+## TOOL RESTRICTIONS
+
+| Agent | Denied Tools |
+|-------|-------------|
+| Oracle | write, edit, task, call_omo_agent |
+| Librarian | write, edit, task, call_omo_agent |
+| Explore | write, edit, task, call_omo_agent |
+| Multimodal-Looker | ALL except read |
+| Atlas | task, call_omo_agent |
+| Momus | write, edit, task |
 
 ## STRUCTURE
 
 ```
 agents/
-├── sisyphus.ts              # Primary orchestrator (Claude Opus 4.5)
-├── oracle.ts                # Strategic advisor (GPT-5.2)
-├── librarian.ts             # Multi-repo research (Claude Sonnet 4.5)
-├── explore.ts               # Fast codebase grep (Grok Code)
-├── frontend-ui-ux-engineer.ts  # UI generation (Gemini 3 Pro)
-├── document-writer.ts       # Technical docs (Gemini 3 Flash)
-├── multimodal-looker.ts     # PDF/image analysis (Gemini 3 Flash)
-├── build-prompt.ts          # Shared build agent prompt
-├── plan-prompt.ts           # Shared plan agent prompt
-├── types.ts                 # AgentModelConfig interface
-├── utils.ts                 # createBuiltinAgents(), getAgentName()
-└── index.ts                 # builtinAgents export
+├── sisyphus.ts            # 559 LOC, main orchestrator
+├── hephaestus.ts          # 507 LOC, autonomous worker
+├── oracle.ts              # Read-only consultant
+├── librarian.ts           # External search
+├── explore.ts             # Codebase grep
+├── multimodal-looker.ts   # Vision/PDF
+├── metis.ts               # Pre-planning
+├── momus.ts               # Plan review
+├── atlas/agent.ts         # Todo orchestrator
+├── types.ts               # AgentFactory, AgentMode
+├── agent-builder.ts       # buildAgent() composition
+├── utils.ts               # Agent utilities
+├── builtin-agents.ts      # createBuiltinAgents() registry
+└── builtin-agents/        # maybeCreateXXXConfig conditional factories
+    ├── sisyphus-agent.ts
+    ├── hephaestus-agent.ts
+    ├── atlas-agent.ts
+    ├── general-agents.ts  # collectPendingBuiltinAgents
+    └── available-skills.ts
 ```
 
-## AGENT MODELS
+## FACTORY PATTERN
 
-| Agent | Default Model | Fallback | Purpose |
-|-------|---------------|----------|---------|
-| Sisyphus | anthropic/claude-opus-4-5 | - | Primary orchestrator with extended thinking |
-| oracle | openai/gpt-5.2 | - | Read-only consultation. High-IQ debugging, architecture |
-| librarian | anthropic/claude-sonnet-4-5 | google/gemini-3-flash | Docs, OSS research, GitHub examples |
-| explore | opencode/grok-code | google/gemini-3-flash, anthropic/claude-haiku-4-5 | Fast contextual grep |
-| frontend-ui-ux-engineer | google/gemini-3-pro-preview | - | UI/UX code generation |
-| document-writer | google/gemini-3-pro-preview | - | Technical writing |
-| multimodal-looker | google/gemini-3-flash | - | PDF/image analysis |
+```typescript
+const createXXXAgent: AgentFactory = (model: string) => ({
+  instructions: "...",
+  model,
+  temperature: 0.1,
+  // ...config
+})
+createXXXAgent.mode = "subagent" // or "primary" or "all"
+```
 
-## HOW TO ADD AN AGENT
+Model resolution: 4-step: override → category-default → provider-fallback → system-default. Defined in `shared/model-requirements.ts`.
 
-1. Create `src/agents/my-agent.ts`:
-   ```typescript
-   import type { AgentConfig } from "@opencode-ai/sdk"
-   
-   export const myAgent: AgentConfig = {
-     model: "provider/model-name",
-     temperature: 0.1,
-     system: "Agent system prompt...",
-     tools: { include: ["tool1", "tool2"] },  // or exclude: [...]
-   }
-   ```
-2. Add to `builtinAgents` in `src/agents/index.ts`
-3. Update `types.ts` if adding new config options
+## MODES
 
-## AGENT CONFIG OPTIONS
-
-| Option | Type | Description |
-|--------|------|-------------|
-| model | string | Model identifier (provider/model-name) |
-| temperature | number | 0.0-1.0, most use 0.1 for consistency |
-| system | string | System prompt (can be multiline template literal) |
-| tools | object | `{ include: [...] }` or `{ exclude: [...] }` |
-| top_p | number | Optional nucleus sampling |
-| maxTokens | number | Optional max output tokens |
-
-## MODEL FALLBACK LOGIC
-
-`createBuiltinAgents()` in utils.ts handles model fallback:
-
-1. Check user config override (`agents.{name}.model`)
-2. Check installer settings (claude max20, gemini antigravity)
-3. Use default model
-
-**Fallback order for explore**:
-- If gemini antigravity enabled → `google/gemini-3-flash`
-- If claude max20 enabled → `anthropic/claude-haiku-4-5`
-- Default → `opencode/grok-code` (free)
-
-## ANTI-PATTERNS (AGENTS)
-
-- **High temperature**: Don't use >0.3 for code-related agents
-- **Broad tool access**: Prefer explicit `include` over unrestricted access
-- **Monolithic prompts**: Keep prompts focused; delegate to specialized agents
-- **Missing fallbacks**: Consider free/cheap fallbacks for rate-limited models
-
-## SHARED PROMPTS
-
-- **build-prompt.ts**: Base prompt for build agents (OpenCode default + Sisyphus variants)
-- **plan-prompt.ts**: Base prompt for plan agents (legacy)
-- **prometheus-prompt.ts**: System prompt for Prometheus (Planner) agent
-- **metis.ts**: Metis (Plan Consultant) agent for pre-planning analysis
-
-Used by `src/index.ts` when creating Builder-Sisyphus and Prometheus (Planner) variants.
+- **primary**: Respects UI-selected model, uses fallback chain
+- **subagent**: Uses own fallback chain, ignores UI selection
+- **all**: Available in both contexts (Sisyphus-Junior)

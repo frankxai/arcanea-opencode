@@ -1,22 +1,18 @@
-import { existsSync } from "node:fs"
+import { existsSync, realpathSync } from "node:fs"
 import { homedir } from "node:os"
-import { join } from "node:path"
+import { join, resolve, win32 } from "node:path"
 
-export type OpenCodeBinaryType = "opencode" | "opencode-desktop"
+import type {
+  OpenCodeBinaryType,
+  OpenCodeConfigDirOptions,
+  OpenCodeConfigPaths,
+} from "./opencode-config-dir-types"
 
-export interface OpenCodeConfigDirOptions {
-  binary: OpenCodeBinaryType
-  version?: string | null
-  checkExisting?: boolean
-}
-
-export interface OpenCodeConfigPaths {
-  configDir: string
-  configJson: string
-  configJsonc: string
-  packageJson: string
-  omoConfig: string
-}
+export type {
+  OpenCodeBinaryType,
+  OpenCodeConfigDirOptions,
+  OpenCodeConfigPaths,
+} from "./opencode-config-dir-types"
 
 export const TAURI_APP_IDENTIFIER = "ai.opencode.desktop"
 export const TAURI_APP_IDENTIFIER_DEV = "ai.opencode.desktop.dev"
@@ -35,7 +31,7 @@ function getTauriConfigDir(identifier: string): string {
 
     case "win32": {
       const appData = process.env.APPDATA || join(homedir(), "AppData", "Roaming")
-      return join(appData, identifier)
+      return win32.join(appData, identifier)
     }
 
     case "linux":
@@ -46,28 +42,25 @@ function getTauriConfigDir(identifier: string): string {
   }
 }
 
+function resolveConfigPath(pathValue: string): string {
+  const resolvedPath = resolve(pathValue)
+  if (!existsSync(resolvedPath)) return resolvedPath
+
+  try {
+    return realpathSync(resolvedPath)
+  } catch {
+    return resolvedPath
+  }
+}
+
 function getCliConfigDir(): string {
-  if (process.platform === "win32") {
-    const crossPlatformDir = join(homedir(), ".config", "opencode")
-    const crossPlatformConfig = join(crossPlatformDir, "opencode.json")
-
-    if (existsSync(crossPlatformConfig)) {
-      return crossPlatformDir
-    }
-
-    const appData = process.env.APPDATA || join(homedir(), "AppData", "Roaming")
-    const appdataDir = join(appData, "opencode")
-    const appdataConfig = join(appdataDir, "opencode.json")
-
-    if (existsSync(appdataConfig)) {
-      return appdataDir
-    }
-
-    return crossPlatformDir
+  const envConfigDir = process.env.OPENCODE_CONFIG_DIR?.trim()
+  if (envConfigDir) {
+    return resolveConfigPath(envConfigDir)
   }
 
   const xdgConfig = process.env.XDG_CONFIG_HOME || join(homedir(), ".config")
-  return join(xdgConfig, "opencode")
+  return resolveConfigPath(join(xdgConfig, "opencode"))
 }
 
 export function getOpenCodeConfigDir(options: OpenCodeConfigDirOptions): string {
@@ -78,7 +71,10 @@ export function getOpenCodeConfigDir(options: OpenCodeConfigDirOptions): string 
   }
 
   const identifier = isDevBuild(version) ? TAURI_APP_IDENTIFIER_DEV : TAURI_APP_IDENTIFIER
-  const tauriDir = getTauriConfigDir(identifier)
+  const tauriDirBase = getTauriConfigDir(identifier)
+  const tauriDir = process.platform === "win32"
+    ? (win32.isAbsolute(tauriDirBase) ? win32.normalize(tauriDirBase) : win32.resolve(tauriDirBase))
+    : resolveConfigPath(tauriDirBase)
 
   if (checkExisting) {
     const legacyDir = getCliConfigDir()
@@ -107,6 +103,11 @@ export function getOpenCodeConfigPaths(options: OpenCodeConfigDirOptions): OpenC
 
 export function detectExistingConfigDir(binary: OpenCodeBinaryType, version?: string | null): string | null {
   const locations: string[] = []
+
+  const envConfigDir = process.env.OPENCODE_CONFIG_DIR?.trim()
+  if (envConfigDir) {
+    locations.push(resolveConfigPath(envConfigDir))
+  }
 
   if (binary === "opencode-desktop") {
     const identifier = isDevBuild(version) ? TAURI_APP_IDENTIFIER_DEV : TAURI_APP_IDENTIFIER

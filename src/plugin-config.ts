@@ -4,16 +4,71 @@ import { OhMyOpenCodeConfigSchema, type OhMyOpenCodeConfig } from "./config";
 import {
   log,
   deepMerge,
-  getUserConfigDir,
+  getOpenCodeConfigDir,
   addConfigLoadError,
   parseJsonc,
-  detectConfigFile,
+  detectPluginConfigFile,
   migrateConfigFile,
 } from "./shared";
+import { migrateLegacyConfigFile } from "./shared/migrate-legacy-config-file";
+import { LEGACY_CONFIG_BASENAME } from "./shared/plugin-identity";
+
+const PARTIAL_STRING_ARRAY_KEYS = new Set([
+  "disabled_mcps",
+  "disabled_agents",
+  "disabled_skills",
+  "disabled_hooks",
+  "disabled_commands",
+  "disabled_tools",
+]);
+
+export function parseConfigPartially(
+  rawConfig: Record<string, unknown>
+): OhMyOpenCodeConfig | null {
+  const fullResult = OhMyOpenCodeConfigSchema.safeParse(rawConfig);
+  if (fullResult.success) {
+    return fullResult.data;
+  }
+
+  const partialConfig: Record<string, unknown> = {};
+  const invalidSections: string[] = [];
+
+  for (const key of Object.keys(rawConfig)) {
+    if (PARTIAL_STRING_ARRAY_KEYS.has(key)) {
+      const sectionValue = rawConfig[key];
+      if (Array.isArray(sectionValue) && sectionValue.every((value) => typeof value === "string")) {
+        partialConfig[key] = sectionValue;
+      }
+      continue;
+    }
+
+    const sectionResult = OhMyOpenCodeConfigSchema.safeParse({ [key]: rawConfig[key] });
+    if (sectionResult.success) {
+      const parsed = sectionResult.data as Record<string, unknown>;
+      if (parsed[key] !== undefined) {
+        partialConfig[key] = parsed[key];
+      }
+    } else {
+      const sectionErrors = sectionResult.error.issues
+        .filter((i) => i.path[0] === key)
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join(", ");
+      if (sectionErrors) {
+        invalidSections.push(`${key}: ${sectionErrors}`);
+      }
+    }
+  }
+
+  if (invalidSections.length > 0) {
+    log("Partial config loaded — invalid sections skipped:", invalidSections);
+  }
+
+  return partialConfig as OhMyOpenCodeConfig;
+}
 
 export function loadConfigFromPath(
   configPath: string,
-  ctx: unknown
+  _ctx: unknown
 ): OhMyOpenCodeConfig | null {
   try {
     if (fs.existsSync(configPath)) {
@@ -24,20 +79,27 @@ export function loadConfigFromPath(
 
       const result = OhMyOpenCodeConfigSchema.safeParse(rawConfig);
 
-      if (!result.success) {
-        const errorMsg = result.error.issues
-          .map((i) => `${i.path.join(".")}: ${i.message}`)
-          .join(", ");
-        log(`Config validation error in ${configPath}:`, result.error.issues);
-        addConfigLoadError({
-          path: configPath,
-          error: `Validation error: ${errorMsg}`,
-        });
-        return null;
+      if (result.success) {
+        log(`Config loaded from ${configPath}`, { agents: result.data.agents });
+        return result.data;
       }
 
-      log(`Config loaded from ${configPath}`, { agents: result.data.agents });
-      return result.data;
+      const errorMsg = result.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join(", ");
+      log(`Config validation error in ${configPath}:`, result.error.issues);
+      addConfigLoadError({
+        path: configPath,
+        error: `Partial config loaded — invalid sections skipped: ${errorMsg}`,
+      });
+
+      const partialResult = parseConfigPartially(rawConfig);
+      if (partialResult) {
+        log(`Partial config loaded from ${configPath}`, { agents: partialResult.agents });
+        return partialResult;
+      }
+
+      return null;
     }
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
@@ -55,6 +117,7 @@ export function mergeConfigs(
     ...base,
     ...override,
     agents: deepMerge(base.agents, override.agents),
+    categories: deepMerge(base.categories, override.categories),
     disabled_agents: [
       ...new Set([
         ...(base.disabled_agents ?? []),
@@ -85,6 +148,12 @@ export function mergeConfigs(
         ...(override.disabled_skills ?? []),
       ]),
     ],
+    disabled_tools: [
+      ...new Set([
+        ...(base.disabled_tools ?? []),
+        ...(override.disabled_tools ?? []),
+      ]),
+    ],
     claude_code: deepMerge(base.claude_code, override.claude_code),
   };
 }
@@ -93,25 +162,31 @@ export function loadPluginConfig(
   directory: string,
   ctx: unknown
 ): OhMyOpenCodeConfig {
-  // User-level config path (OS-specific) - prefer .jsonc over .json
-  const userBasePath = path.join(
-    getUserConfigDir(),
-    "opencode",
-    "oh-my-opencode"
-  );
-  const userDetected = detectConfigFile(userBasePath);
+  // User-level config path - prefer .jsonc over .json
+  const configDir = getOpenCodeConfigDir({ binary: "opencode" });
+  const userDetected = detectPluginConfigFile(configDir);
   const userConfigPath =
     userDetected.format !== "none"
       ? userDetected.path
-      : userBasePath + ".json";
+      : path.join(configDir, "oh-my-opencode.json");
+
+  // Auto-copy legacy config file to canonical name if needed
+  if (userDetected.format !== "none" && path.basename(userDetected.path).startsWith(LEGACY_CONFIG_BASENAME)) {
+    migrateLegacyConfigFile(userDetected.path);
+  }
 
   // Project-level config path - prefer .jsonc over .json
-  const projectBasePath = path.join(directory, ".opencode", "oh-my-opencode");
-  const projectDetected = detectConfigFile(projectBasePath);
+  const projectBasePath = path.join(directory, ".opencode");
+  const projectDetected = detectPluginConfigFile(projectBasePath);
   const projectConfigPath =
     projectDetected.format !== "none"
       ? projectDetected.path
-      : projectBasePath + ".json";
+      : path.join(projectBasePath, "oh-my-opencode.json");
+
+  // Auto-copy legacy project config file to canonical name if needed
+  if (projectDetected.format !== "none" && path.basename(projectDetected.path).startsWith(LEGACY_CONFIG_BASENAME)) {
+    migrateLegacyConfigFile(projectDetected.path);
+  }
 
   // Load user config first (base)
   let config: OhMyOpenCodeConfig =
@@ -122,6 +197,10 @@ export function loadPluginConfig(
   if (projectConfig) {
     config = mergeConfigs(config, projectConfig);
   }
+
+  config = {
+    ...config,
+  };
 
   log("Final merged config", {
     agents: config.agents,

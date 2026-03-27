@@ -1,6 +1,7 @@
 import { tool, type ToolDefinition } from "@opencode-ai/plugin/tool"
+import { spawnWithWindowsHide } from "../../shared/spawn-with-windows-hide"
 import { BLOCKED_TMUX_SUBCOMMANDS, DEFAULT_TIMEOUT_MS, INTERACTIVE_BASH_DESCRIPTION } from "./constants"
-import { getCachedTmuxPath } from "./utils"
+import { getCachedTmuxPath } from "./tmux-path-resolver"
 
 /**
  * Quote-aware command tokenizer with escape handling
@@ -64,20 +65,51 @@ export const interactive_bash: ToolDefinition = tool({
 
       const subcommand = parts[0].toLowerCase()
       if (BLOCKED_TMUX_SUBCOMMANDS.includes(subcommand)) {
-        return `Error: '${parts[0]}' is blocked. Use bash tool instead for capturing/printing terminal output.`
+        const sessionIdx = parts.findIndex(p => p === "-t" || p.startsWith("-t"))
+        let sessionName = "omo-session"
+        if (sessionIdx !== -1) {
+          if (parts[sessionIdx] === "-t" && parts[sessionIdx + 1]) {
+            sessionName = parts[sessionIdx + 1]
+          } else if (parts[sessionIdx].startsWith("-t")) {
+            sessionName = parts[sessionIdx].slice(2)
+          }
+        }
+
+        return `Error: '${parts[0]}' is blocked in interactive_bash.
+
+**USE BASH TOOL INSTEAD:**
+
+\`\`\`bash
+# Capture terminal output
+tmux capture-pane -p -t ${sessionName}
+
+# Or capture with history (last 1000 lines)
+tmux capture-pane -p -t ${sessionName} -S -1000
+\`\`\`
+
+The Bash tool can execute these commands directly. Do NOT retry with interactive_bash.`
       }
 
-      const proc = Bun.spawn([tmuxPath, ...parts], {
+      const proc = spawnWithWindowsHide([tmuxPath, ...parts], {
         stdout: "pipe",
         stderr: "pipe",
       })
 
       const timeoutPromise = new Promise<never>((_, reject) => {
         const id = setTimeout(() => {
-          proc.kill()
-          reject(new Error(`Timeout after ${DEFAULT_TIMEOUT_MS}ms`))
+          const timeoutError = new Error(`Timeout after ${DEFAULT_TIMEOUT_MS}ms`)
+          try {
+            proc.kill()
+            // Fire-and-forget: wait for process exit in background to avoid zombies
+            void proc.exited.catch(() => {})
+          } catch {
+            // Ignore kill errors; we'll still reject with timeoutError below
+          }
+          reject(timeoutError)
         }, DEFAULT_TIMEOUT_MS)
-        proc.exited.then(() => clearTimeout(id))
+        proc.exited
+          .then(() => clearTimeout(id))
+          .catch(() => clearTimeout(id))
       })
 
       // Read stdout and stderr in parallel to avoid race conditions
