@@ -18,6 +18,7 @@
 
 // Export the main orchestrator
 export { createArcaneaOrchestratorAgent, arcaneaOrchestratorAgent } from "./arcanea-orchestrator"
+import { createArcaneaOrchestratorAgent } from "./arcanea-orchestrator"
 
 import type { AgentConfig } from "@opencode-ai/sdk"
 
@@ -1275,4 +1276,202 @@ export const arcaneaAgentFactories = {
   "arcanea-muse": createArcaneaMuseAgent,
   // Master
   "arcanea-master-orchestrator": createArcaneaMasterOrchestratorAgent,
+}
+
+// ============================================================================
+// TYPED AGENT FACTORIES (conforming to upstream AgentFactory type)
+// ============================================================================
+
+import type { AgentFactory, AgentPromptMetadata } from "../types"
+
+/**
+ * Wraps a simple (model?: string) => AgentConfig factory into the upstream
+ * AgentFactory type which requires a static `.mode` property.
+ */
+function wrapFactory(
+  fn: (model?: string) => AgentConfig,
+  mode: "primary" | "subagent" | "all" = "subagent"
+): AgentFactory {
+  const factory = ((model: string) => fn(model)) as AgentFactory
+  factory.mode = mode
+  return factory
+}
+
+/**
+ * All Arcanea agents as proper AgentFactory instances compatible with
+ * the upstream builtin-agents.ts registration pattern.
+ */
+export const arcaneaTypedFactories: Record<string, AgentFactory> = {
+  // Development Team
+  "arcanea-architect": wrapFactory(createArcaneaArchitectAgent),
+  "arcanea-coder": wrapFactory(createArcaneaCoderAgent),
+  "arcanea-reviewer": wrapFactory(createArcaneaReviewerAgent),
+  "arcanea-debugger": wrapFactory(createArcaneaDebuggerAgent),
+  // Creative Team
+  "arcanea-story-master": wrapFactory(createArcaneaStoryMasterAgent),
+  "arcanea-character-crafter": wrapFactory(createArcaneaCharacterCrafterAgent),
+  "arcanea-world-expander": wrapFactory(createArcaneaWorldExpanderAgent),
+  "arcanea-lore-master": wrapFactory(createArcaneaLoreMasterAgent),
+  // Writing Team
+  "arcanea-prose-weaver": wrapFactory(createArcaneaProseWeaverAgent),
+  "arcanea-voice-alchemist": wrapFactory(createArcaneaVoiceAlchemistAgent),
+  "arcanea-line-editor": wrapFactory(createArcaneaLineEditorAgent),
+  "arcanea-continuity-guardian": wrapFactory(createArcaneaContinuityGuardianAgent),
+  // Research Team
+  "arcanea-sage": wrapFactory(createArcaneaSageAgent),
+  "arcanea-archivist": wrapFactory(createArcaneaArchivistAgent),
+  "arcanea-scout": wrapFactory(createArcaneaScoutAgent),
+  "arcanea-muse": wrapFactory(createArcaneaMuseAgent),
+  // Master Orchestrator
+  "arcanea-master-orchestrator": wrapFactory(createArcaneaMasterOrchestratorAgent),
+}
+
+/**
+ * Arcanea Orchestrator factory — primary agent, needs special handling
+ * like Atlas (takes availableAgents context).
+ */
+export const arcaneaOrchestratorFactory: AgentFactory = (() => {
+  const factory = ((model: string) => createArcaneaOrchestratorAgent(model)) as AgentFactory
+  factory.mode = "primary"
+  return factory
+})()
+
+/**
+ * Prompt metadata for Arcanea agents, enabling dynamic Sisyphus prompt
+ * sections (Delegation Table, Tool Selection, Key Triggers).
+ */
+export const arcaneaAgentMetadata: Partial<Record<string, AgentPromptMetadata>> = {
+  "arcanea-architect": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "System Design", trigger: "Architecture decisions, system design, structural planning" }],
+    useWhen: ["Complex system design needed", "Architecture decisions", "Multi-component planning"],
+    keyTrigger: "Architecture/system design needed -> fire arcanea-architect",
+    promptAlias: "Arcanea Architect",
+  },
+  "arcanea-coder": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Implementation", trigger: "Feature implementation following Arcanean coding standards" }],
+    useWhen: ["Feature implementation", "Code following Arcanean standards"],
+    promptAlias: "Arcanea Coder",
+  },
+  "arcanea-reviewer": {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Code Quality", trigger: "Code review through Seven Luminors lens" }],
+    useWhen: ["Code review needed", "Quality assessment"],
+    promptAlias: "Arcanea Reviewer",
+  },
+  "arcanea-debugger": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Debugging", trigger: "Scientific root cause analysis for bugs" }],
+    useWhen: ["Bug investigation", "Root cause analysis"],
+    keyTrigger: "Bug or error reported -> fire arcanea-debugger",
+    promptAlias: "Arcanea Debugger",
+  },
+  "arcanea-story-master": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Narrative", trigger: "Story architecture, plot design, narrative structure" }],
+    useWhen: ["Story planning", "Narrative design", "Plot architecture"],
+    keyTrigger: "Story/narrative work -> fire arcanea-story-master",
+    promptAlias: "Arcanea Story Master",
+  },
+  "arcanea-character-crafter": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Characters", trigger: "Character psychology, voice creation, motivation design" }],
+    useWhen: ["Character development", "Voice creation", "Psychology design"],
+    promptAlias: "Arcanea Character Crafter",
+  },
+  "arcanea-world-expander": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "World-Building", trigger: "Cosmology, geography, magic systems, cultures" }],
+    useWhen: ["World-building", "Setting design", "Magic system creation"],
+    keyTrigger: "World-building request -> fire arcanea-world-expander",
+    promptAlias: "Arcanea World Expander",
+  },
+  "arcanea-lore-master": {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Canon", trigger: "Canon verification, lore consistency, mythology guarding" }],
+    useWhen: ["Canon verification needed", "Lore consistency check"],
+    keyTrigger: "Canon/lore question -> fire arcanea-lore-master",
+    promptAlias: "Arcanea Lore Master",
+  },
+  "arcanea-prose-weaver": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Prose", trigger: "First draft writing, creative flow, scene drafting" }],
+    useWhen: ["Draft writing", "Scene creation", "Prose generation"],
+    promptAlias: "Arcanea Prose Weaver",
+  },
+  "arcanea-voice-alchemist": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Dialogue", trigger: "Dialogue craft, voice differentiation, subtext" }],
+    useWhen: ["Dialogue writing", "Voice differentiation"],
+    promptAlias: "Arcanea Voice Alchemist",
+  },
+  "arcanea-line-editor": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Editing", trigger: "Prose polishing, line-level editing, word surgery" }],
+    useWhen: ["Prose polishing", "Line editing", "Text refinement"],
+    promptAlias: "Arcanea Line Editor",
+  },
+  "arcanea-continuity-guardian": {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Continuity", trigger: "Timeline tracking, character consistency, detail verification" }],
+    useWhen: ["Continuity checking", "Consistency verification"],
+    promptAlias: "Arcanea Continuity Guardian",
+  },
+  "arcanea-sage": {
+    category: "advisor",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Deep Analysis", trigger: "Complex questions needing multi-layer analysis" }],
+    useWhen: ["Strategic decisions", "Deep analysis", "Complex problems"],
+    keyTrigger: "Complex strategic question -> fire arcanea-sage",
+    promptAlias: "Arcanea Sage",
+  },
+  "arcanea-archivist": {
+    category: "utility",
+    cost: "FREE",
+    triggers: [{ domain: "Reference", trigger: "Canon lookup, reference finding, detail retrieval" }],
+    useWhen: ["Canon lookup", "Reference retrieval"],
+    promptAlias: "Arcanea Archivist",
+  },
+  "arcanea-scout": {
+    category: "exploration",
+    cost: "FREE",
+    triggers: [{ domain: "Exploration", trigger: "Fast file/pattern reconnaissance" }],
+    useWhen: ["Quick exploration", "File finding", "Pattern searching"],
+    promptAlias: "Arcanea Scout",
+  },
+  "arcanea-muse": {
+    category: "exploration",
+    cost: "FREE",
+    triggers: [{ domain: "Inspiration", trigger: "External reference finding, creative sparks" }],
+    useWhen: ["Need inspiration", "External reference search"],
+    promptAlias: "Arcanea Muse",
+  },
+  "arcanea-master-orchestrator": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Cross-Team Coordination", trigger: "Multi-team initiatives spanning dev/creative/writing/research" }],
+    useWhen: ["Cross-team coordination", "Multi-domain initiatives"],
+    keyTrigger: "Multi-team initiative -> fire arcanea-master-orchestrator",
+    promptAlias: "Arcanea Master Orchestrator",
+  },
+  "arcanea-orchestrator": {
+    category: "specialist",
+    cost: "EXPENSIVE",
+    triggers: [{ domain: "Arcanea Intelligence", trigger: "Arcanea-mode primary agent, Seven Wisdoms coordination" }],
+    useWhen: ["Arcanea mode active", "Creative multiverse tasks"],
+    promptAlias: "Arcanea",
+  },
 }

@@ -13,6 +13,11 @@ import { createAtlasAgent, atlasPromptMetadata } from "./atlas"
 import { createMomusAgent, momusPromptMetadata } from "./momus"
 import { createHephaestusAgent } from "./hephaestus"
 import { createSisyphusJuniorAgentWithOverrides } from "./sisyphus-junior"
+import {
+  arcaneaTypedFactories,
+  arcaneaOrchestratorFactory,
+  arcaneaAgentMetadata,
+} from "./arcanea"
 import type { AvailableCategory } from "./dynamic-agent-prompt-builder"
 import {
   fetchAvailableModels,
@@ -43,6 +48,26 @@ const agentSources: Record<BuiltinAgentName, AgentSource> = {
   // because it needs OrchestratorContext, not just a model string
   atlas: createAtlasAgent as AgentFactory,
   "sisyphus-junior": createSisyphusJuniorAgentWithOverrides as unknown as AgentFactory,
+  // Arcanea agents — integrated from src/agents/arcanea/
+  "arcanea-architect": arcaneaTypedFactories["arcanea-architect"],
+  "arcanea-coder": arcaneaTypedFactories["arcanea-coder"],
+  "arcanea-reviewer": arcaneaTypedFactories["arcanea-reviewer"],
+  "arcanea-debugger": arcaneaTypedFactories["arcanea-debugger"],
+  "arcanea-story-master": arcaneaTypedFactories["arcanea-story-master"],
+  "arcanea-character-crafter": arcaneaTypedFactories["arcanea-character-crafter"],
+  "arcanea-world-expander": arcaneaTypedFactories["arcanea-world-expander"],
+  "arcanea-lore-master": arcaneaTypedFactories["arcanea-lore-master"],
+  "arcanea-prose-weaver": arcaneaTypedFactories["arcanea-prose-weaver"],
+  "arcanea-voice-alchemist": arcaneaTypedFactories["arcanea-voice-alchemist"],
+  "arcanea-line-editor": arcaneaTypedFactories["arcanea-line-editor"],
+  "arcanea-continuity-guardian": arcaneaTypedFactories["arcanea-continuity-guardian"],
+  "arcanea-sage": arcaneaTypedFactories["arcanea-sage"],
+  "arcanea-archivist": arcaneaTypedFactories["arcanea-archivist"],
+  "arcanea-scout": arcaneaTypedFactories["arcanea-scout"],
+  "arcanea-muse": arcaneaTypedFactories["arcanea-muse"],
+  "arcanea-master-orchestrator": arcaneaTypedFactories["arcanea-master-orchestrator"],
+  // Note: arcanea-orchestrator is handled like Atlas — needs availableAgents context
+  "arcanea-orchestrator": arcaneaOrchestratorFactory,
 }
 
 /**
@@ -57,6 +82,8 @@ const agentMetadata: Partial<Record<BuiltinAgentName, AgentPromptMetadata>> = {
   metis: metisPromptMetadata,
   momus: momusPromptMetadata,
   atlas: atlasPromptMetadata,
+  // Arcanea agent metadata for dynamic Sisyphus prompt sections
+  ...arcaneaAgentMetadata as Partial<Record<BuiltinAgentName, AgentPromptMetadata>>,
 }
 
 export async function createBuiltinAgents(

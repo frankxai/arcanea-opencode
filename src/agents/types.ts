@@ -119,7 +119,30 @@ export type BuiltinAgentName =
   | "metis"
   | "momus"
   | "atlas"
-  | "sisyphus-junior";
+  | "sisyphus-junior"
+  // Arcanea agents — Development Team
+  | "arcanea-architect"
+  | "arcanea-coder"
+  | "arcanea-reviewer"
+  | "arcanea-debugger"
+  // Arcanea agents — Creative Team
+  | "arcanea-story-master"
+  | "arcanea-character-crafter"
+  | "arcanea-world-expander"
+  | "arcanea-lore-master"
+  // Arcanea agents — Writing Team
+  | "arcanea-prose-weaver"
+  | "arcanea-voice-alchemist"
+  | "arcanea-line-editor"
+  | "arcanea-continuity-guardian"
+  // Arcanea agents — Research Team
+  | "arcanea-sage"
+  | "arcanea-archivist"
+  | "arcanea-scout"
+  | "arcanea-muse"
+  // Arcanea agents — Orchestration
+  | "arcanea-orchestrator"
+  | "arcanea-master-orchestrator";
 
 export type OverridableAgentName = "build" | BuiltinAgentName;
 

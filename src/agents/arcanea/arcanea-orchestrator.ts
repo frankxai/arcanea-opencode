@@ -7,7 +7,7 @@
  */
 
 import type { AgentConfig } from "@opencode-ai/sdk"
-import type { AvailableAgent } from "../sisyphus-prompt-builder"
+import type { AvailableAgent } from "../dynamic-agent-prompt-builder"
 
 const ARCANEA_COLOR = "#8b5cf6" // Cosmic purple
 
