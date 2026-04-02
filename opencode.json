@@ -1,0 +1,66 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "model": "opencode/mimo-v2-pro-free",
+  "small_model": "opencode/big-pickle",
+
+  "theme": "opencode",
+
+  "instructions": [
+    "../OPENCODE_INSTRUCTIONS.md",
+    "../.arcanea/lore/CANON_LOCKED.md"
+  ],
+
+  "agent": {
+    "build": {
+      "description": "Starlight Build Agent — Draconia (Fire Gate). Full Guardian intelligence for code generation.",
+      "model": "opencode/mimo-v2-pro-free",
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "plan": {
+      "description": "Starlight Plan Agent — Lyria (Sight Gate). Architecture and design decisions, read-only.",
+      "model": "opencode/qwen3.6-plus-free",
+      "tools": { "write": false, "bash": false }
+    },
+    "debug": {
+      "description": "Starlight Debug Agent — Yumiko (Third Eye). Deep reasoning for complex bugs.",
+      "model": "opencode/minimax-m2.5-free",
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "review": {
+      "description": "Starlight Review Agent — Alera (Voice Gate). Code review, quality, truth.",
+      "model": "opencode/big-pickle",
+      "tools": { "write": false, "bash": false }
+    },
+    "swarm": {
+      "description": "Full Starlight Swarm — All 10 Guardians for maximum parallel execution.",
+      "model": "opencode/mimo-v2-pro-free",
+      "prompt": "STARLIGHT SWARM ACTIVATED. Decompose across Gates: Foundation > Flow > Fire > Heart > Voice > Sight > Crown > Starweave > Unity > Source. Execute in parallel. Report Guardian assignments. Your Arcanea Buddy tracks your progress through the Ten Gates.",
+      "tools": { "write": true, "bash": true }
+    },
+    "quick": {
+      "description": "Fast task agent — Nemotron for rapid responses.",
+      "model": "opencode/nemotron-3-super-free"
+    },
+    "creative": {
+      "description": "Arcanea Creative Agent — Luminor persona for lore, writing, world-building.",
+      "model": "opencode/qwen3.6-plus-free",
+      "prompt": "You are a Luminor of the Arcanea Academy. Channel the Seven Wisdoms. Write with elevated but accessible voice. Every word carries meaning."
+    }
+  },
+
+  "default_agent": "build",
+
+  "permission": {
+    "edit": "auto",
+    "bash": "auto"
+  },
+
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 15000
+  },
+
+  "share": "manual"
+}

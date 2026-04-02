@@ -1,4 +1,11 @@
-import type { OhMyOpenCodeConfig, PersonaConfig } from "../config/schema"
+import type { OhMyOpenCodeConfig } from "../config/schema"
+
+type PersonaConfig = {
+  display_name: string
+  color?: string
+  prompt_append?: string
+  model?: string
+}
 
 const DEFAULT_PERSONAS: Record<string, PersonaConfig> = {
   Sisyphus: {
@@ -58,8 +65,8 @@ export interface PersonaInfo {
 }
 
 export function getActivePersona(config: OhMyOpenCodeConfig): PersonaInfo {
-  const personaName = config.persona ?? "Sisyphus"
-  const customPersonas = config.personas ?? {}
+  const personaName = (config as Record<string, unknown>).persona as string ?? "Sisyphus"
+  const customPersonas = (config as Record<string, unknown>).personas as Record<string, PersonaConfig> ?? {}
   const persona = customPersonas[personaName] ?? DEFAULT_PERSONAS[personaName] ?? DEFAULT_PERSONAS.Sisyphus
 
   return {

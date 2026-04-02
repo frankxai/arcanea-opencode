@@ -8,6 +8,7 @@ import type { ModelCacheState } from "./plugin-state"
 import { createCoreHooks } from "./plugin/hooks/create-core-hooks"
 import { createContinuationHooks } from "./plugin/hooks/create-continuation-hooks"
 import { createSkillHooks } from "./plugin/hooks/create-skill-hooks"
+import { createArcaneBuddyHook } from "./hooks/arcanea-buddy"
 
 export type CreatedHooks = ReturnType<typeof createHooks>
 
@@ -72,10 +73,14 @@ export function createHooks(args: {
     availableSkills,
   })
 
+  // Arcanea Buddy — Terminal companion that grows with your work
+  const arcaneBuddy = createArcaneBuddyHook()
+
   const hooks = {
     ...core,
     ...continuation,
     ...skill,
+    arcaneBuddy,
   }
 
   return {
